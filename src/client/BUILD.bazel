@@ -43,3 +43,10 @@ package(default_visibility = ["//visibility:public"])
 #  ],
 #)
 
+filegroup(
+    name = "client",
+    srcs = glob([
+       "**/*.svelte",
+       "**/*.ts",
+    ]),
+)

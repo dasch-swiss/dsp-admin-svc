@@ -1,6 +1,43 @@
 package(default_visibility = ["//visibility:public"])
 
+load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_binary")
+load("@npm//@bazel/rollup:index.bzl", "rollup_bundle")
+
 exports_files([
   "tsconfig.json",
   "tsconfig-node.json",
 ])
+
+filegroup(
+    name = "client_config",
+    srcs = [
+        "package.json",
+        "rollup.config.js",
+        "tsconfig.json",
+    ] + glob(["node_modules/**/*"]),
+)
+
+nodejs_binary(
+    name = "rollup_bin",
+    entry_point = "//:node_modules/rollup/bin/rollup",
+    # Point bazel to your node_modules to find the entry point
+    data = ["@npm//express",],
+)
+
+rollup_bundle(
+    name = "bundle",
+    srcs = ["dependency.js"],
+    entry_point = "input.js",
+    config_file = "rollup.config.js",
+)
+
+genrule(
+    name = "build_client",
+    srcs = [
+        ":client_config",
+        "//src/client",
+
+    ],
+    outs = ["foo.h"],
+    cmd = "yarn run build > \"$@\"",
+)
