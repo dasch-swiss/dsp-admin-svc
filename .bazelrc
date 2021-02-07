@@ -1,3 +1,3 @@
 build --verbose_failures
 build --workspace_status_command=tools/buildstamp/get_workspace_status --stamp=yes
-# build --symlink_prefix=dist/
+build --symlink_prefix=dist/

@@ -1,5 +1,9 @@
 package(default_visibility = ["//visibility:public"])
 
+load("@npm//@bazel/typescript:index.bzl", "ts_library")
+load("@npm//@bazel/rollup:index.bzl", "rollup_bundle")
+
+
 #load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_binary")
 #load("@build_bazel_rules_svelte//:defs.bzl", "svelte", "bundle_dev", "bundle_prod")
 #
@@ -44,9 +48,41 @@ package(default_visibility = ["//visibility:public"])
 #)
 
 filegroup(
-    name = "client",
+    name = "svelte_files",
     srcs = glob([
        "**/*.svelte",
-       "**/*.ts",
     ]),
+)
+
+ts_library(
+    name = "library",
+    srcs = glob([
+        "**/*.ts",
+    ]),
+    tsconfig = "//:tsconfig.json",
+    deps = [
+        "@npm//:node_modules",
+    ]
+)
+
+filegroup(
+    name = "library.js",
+    srcs = [":library"],
+    output_group = "es6_sources",
+)
+
+rollup_bundle(
+    name = "client_bundling",
+    config_file = "//:rollup.config.js",
+    entry_point = ":main.ts",
+    format = "esm",
+    output_dir = True,
+    supports_workers = True,
+    deps = [
+        ":svelte_files",
+        ":library.js",
+        "@npm//@rollup/plugin-commonjs",
+        "@npm//@rollup/plugin-node-resolve",
+        "@npm//:node_modules"
+    ],
 )

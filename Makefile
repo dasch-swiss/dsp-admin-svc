@@ -12,16 +12,14 @@ include vars.mk
 
 .PHONY: install
 install: ## install dependencies
-	@yarn install
+	@bazel run @nodejs//:yarn
 
 .PHONY: build
 build: install ## build all targets
-	@yarn run build
 	@bazel build //...
 
 .PHONY: build-linux
 build-linux: install ## build all targets
-	@yarn run build
 	@bazel build --platforms=@build_bazel_rules_nodejs//toolchains/node:linux_amd64 //...
 
 #################################
