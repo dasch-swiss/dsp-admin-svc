@@ -10,16 +10,16 @@ include vars.mk
 # Bazel targets
 #################################
 
-.PHONY: install
-install: ## install dependencies
+.PHONY: yarn
+yarn: ## install dependencies
 	@bazel run @nodejs//:yarn
 
 .PHONY: build
-build: install ## build all targets
+build: yarn ## build all targets
 	@bazel build //...
 
 .PHONY: build-linux
-build-linux: install ## build all targets
+build-linux: yarn ## build all targets
 	@bazel build --platforms=@build_bazel_rules_nodejs//toolchains/node:linux_amd64 //...
 
 #################################
@@ -27,11 +27,11 @@ build-linux: install ## build all targets
 #################################
 
 .PHONY: docker-build
-docker-build: install ## publish linux/amd64 platform image locally
+docker-build: yarn ## publish linux/amd64 platform image locally
 	@bazel run --platforms=@build_bazel_rules_nodejs//toolchains/node:linux_amd64 //docker -- --norun
 
 .PHONY: docker-publish
-docker-publish: install ## publish linux/amd64 platform image to Dockerhub
+docker-publish: yarn ## publish linux/amd64 platform image to Dockerhub
 	@bazel run --platforms=@build_bazel_rules_nodejs//toolchains/node:linux_amd64 //docker:push
 
 .PHONY: help
