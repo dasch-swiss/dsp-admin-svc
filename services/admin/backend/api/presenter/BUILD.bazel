@@ -3,7 +3,7 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "presenter",
     srcs = [
-        "organization.go",
+        "listNode_presenter.go",
     ],
     importpath = "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/api/presenter",
     visibility = ["//visibility:public"],

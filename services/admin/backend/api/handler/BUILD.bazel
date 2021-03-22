@@ -3,14 +3,14 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "handler",
     srcs = [
-        "organization.go",
+        "listNode_handler.go",
     ],
     importpath = "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/api/handler",
     visibility = ["//visibility:public"],
     deps = [
         "//services/admin/backend/api/presenter",
         "//services/admin/backend/entity",
-        "//services/admin/backend/usecase/organization",
+        "//services/admin/backend/usecase/listNode",
         "@com_github_gorilla_mux//:go_default_library",
         "@com_github_urfave_negroni//:go_default_library"
     ],
