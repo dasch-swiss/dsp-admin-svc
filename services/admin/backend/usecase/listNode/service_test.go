@@ -21,20 +21,32 @@
  *
  */
 
-package repository
+package listNode
 
 import (
-	badger "github.com/dgraph-io/badger/v3"
+	"testing"
+	"time"
+
+	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
+	"github.com/stretchr/testify/assert"
 )
 
-//UserMySQL mysql repo
-type OrganizationBadgerDB struct {
-	db *badger.DB
+func newFixtureListNode() *entity.ListNode {
+	return &entity.ListNode{
+		ID:        entity.NewID(),
+		Name:      "TEST node name",
+		Label:     "TEST node label",
+		Comment:   "TEST node comment",
+		CreatedAt: time.Now(),
+	}
 }
 
-//NewOrganizationBadgerDB create new repository
-func NewOrganizationBadgerDB(db *badger.DB) *OrganizationBadgerDB {
-	return &OrganizationBadgerDB{
-		db: db,
-	}
+func Test_Create(t *testing.T) {
+	repo := newInmem()
+	service := NewService(repo)
+	node := newFixtureListNode()
+	_, err := service.CreateListNode(node.Name, node.Label, node.Comment)
+	assert.Nil(t, err)
+	assert.False(t, node.CreatedAt.IsZero())
+	assert.True(t, node.UpdatedAt.IsZero())
 }

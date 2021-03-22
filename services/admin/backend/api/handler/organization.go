@@ -25,20 +25,23 @@ package handler
 
 import (
 	"encoding/json"
-	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/api/presenter"
-	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
-	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/organization"
-	"github.com/gorilla/mux"
-	"github.com/urfave/negroni"
 	"log"
 	"net/http"
+
+	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/api/presenter"
+	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
+	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/listNode"
+	"github.com/gorilla/mux"
+	"github.com/urfave/negroni"
 )
 
-func createOrganization(service organization.UseCase) http.Handler {
+func createListNode(service listNode.UseCase) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		errorMessage := "Error adding organization"
+		errorMessage := "Error adding list node"
 		var input struct {
-			Name string `json:"name"`
+			Name    string `json:"name"`
+			Label   string `json:"label"`
+			Comment string `json:"comment"`
 		}
 		err := json.NewDecoder(r.Body).Decode(&input)
 		if err != nil {
@@ -47,16 +50,18 @@ func createOrganization(service organization.UseCase) http.Handler {
 			w.Write([]byte(errorMessage))
 			return
 		}
-		id, err := service.CreateOrganization(input.Name)
+		id, err := service.CreateListNode(input.Name, input.Label, input.Comment)
 		if err != nil {
 			log.Println(err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(errorMessage))
 			return
 		}
-		toJ := &presenter.Organization{
-			ID:   id,
-			Name: input.Name,
+		toJ := &presenter.ListNode{
+			ID:      id,
+			Name:    input.Name,
+			Label:   input.Label,
+			Comment: input.Comment,
 		}
 
 		w.WriteHeader(http.StatusCreated)
@@ -68,9 +73,9 @@ func createOrganization(service organization.UseCase) http.Handler {
 	})
 }
 
-func getOrganization(service organization.UseCase) http.Handler {
+func getListNode(service listNode.UseCase) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		errorMessage := "Error reading organization"
+		errorMessage := "Error reading list node"
 		vars := mux.Vars(r)
 		id, err := entity.StringToID(vars["id"])
 		if err != nil {
@@ -78,7 +83,7 @@ func getOrganization(service organization.UseCase) http.Handler {
 			w.Write([]byte(errorMessage))
 			return
 		}
-		data, err := service.GetOrganization(id)
+		data, err := service.GetListNode(id)
 		w.Header().Set("Content-Type", "application/json")
 		if err != nil && err != entity.ErrNotFound {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -91,9 +96,11 @@ func getOrganization(service organization.UseCase) http.Handler {
 			w.Write([]byte(errorMessage))
 			return
 		}
-		toJ := &presenter.Organization{
-			ID:   data.ID,
-			Name: data.Name,
+		toJ := &presenter.ListNode{
+			ID:      data.ID,
+			Name:    data.Name,
+			Label:   data.Label,
+			Comment: data.Comment,
 		}
 		if err := json.NewEncoder(w).Encode(toJ); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -103,18 +110,18 @@ func getOrganization(service organization.UseCase) http.Handler {
 }
 
 //MakeUserHandlers make url handlers
-func MakeOrganizationHandlers(r *mux.Router, n negroni.Negroni, service organization.UseCase) {
+func MakeListNodeHandlers(r *mux.Router, n negroni.Negroni, service listNode.UseCase) {
 	//r.Handle("/v1/user", n.With(
 	//	negroni.Wrap(listUsers(service)),
 	//)).Methods("GET", "OPTIONS").Name("listUsers")
 
-	r.Handle("/v1/organization", n.With(
-		negroni.Wrap(createOrganization(service)),
-	)).Methods("POST", "OPTIONS").Name("createOrganization")
+	r.Handle("/v1/listnode", n.With(
+		negroni.Wrap(createListNode(service)),
+	)).Methods("POST", "OPTIONS").Name("createListNode")
 
-	r.Handle("/v1/organization/{id}", n.With(
-		negroni.Wrap(getOrganization(service)),
-	)).Methods("GET", "OPTIONS").Name("getOrganization")
+	r.Handle("/v1/listnode/{id}", n.With(
+		negroni.Wrap(getListNode(service)),
+	)).Methods("GET", "OPTIONS").Name("getListNode")
 
 	//r.Handle("/v1/user/{id}", n.With(
 	//	negroni.Wrap(deleteUser(service)),

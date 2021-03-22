@@ -25,8 +25,10 @@ package presenter
 
 import "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
 
-//Organization data
-type Organization struct {
-	ID   entity.ID `json:"id"`
-	Name string    `json:"name"`
+//ListNode data
+type ListNode struct {
+	ID      entity.ID `json:"id"`
+	Name    string    `json:"name"`
+	Label   string    `json:"label"`
+	Comment string    `json:"comment"`
 }

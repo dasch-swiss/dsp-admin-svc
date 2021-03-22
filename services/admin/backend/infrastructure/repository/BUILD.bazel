@@ -3,8 +3,8 @@ load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "repository",
     srcs = [
-        # "organization_badgerdb.go",
-        "organization_inmem.go"
+        # "listNode_badgerdb.go",
+        "listNode_inmem.go"
     ],
     importpath = "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/infrastructure/repository",
     visibility = ["//visibility:public"],

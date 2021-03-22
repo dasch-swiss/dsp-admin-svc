@@ -1,13 +1,13 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
-    name = "organization",
+    name = "listNode",
     srcs = [
         "inmem.go",
         "interface.go",
         "service.go",
     ],
-    importpath = "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/organization",
+    importpath = "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/listNode",
     visibility = ["//visibility:public"],
     deps = [
         "//services/admin/backend/entity",
@@ -18,10 +18,10 @@ go_library(
     name = "inmem",
     testonly = True,
     srcs = ["inmem.go"],
-    importpath = "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/organization",
+    importpath = "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/listNode",
     visibility = ["//visibility:public"],
     deps = [
-        ":organization",
+        ":listNode",
         "//services/admin/backend/entity",
     ],
 )
@@ -31,7 +31,7 @@ go_test(
     srcs = ["service_test.go"],
     visibility = ["//visibility:public"],
     size = "small",
-    embed = [":organization"],
+    embed = [":listNode"],
     deps = [
         "@com_github_stretchr_testify//assert"
     ],

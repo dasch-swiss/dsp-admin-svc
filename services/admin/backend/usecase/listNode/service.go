@@ -21,7 +21,7 @@
  *
  */
 
-package organization
+package listNode
 
 import "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
 
@@ -37,16 +37,16 @@ func NewService(r Repository) *Service {
 	}
 }
 
-//CreateOrganization
-func (s *Service) CreateOrganization(name string) (entity.ID, error) {
-	e, err := entity.NewOrganization(name)
+//CreateListNode create a ListNode
+func (s *Service) CreateListNode(name string, label string, comment string) (entity.ID, error) {
+	e, err := entity.NewListNode(name, label, comment)
 	if err != nil {
 		return e.ID, err
 	}
 	return s.repo.Create(e)
 }
 
-//GetOrganization get a Organization
-func (s *Service) GetOrganization(id entity.ID) (*entity.Organization, error) {
+//GetListNode get a ListNode
+func (s *Service) GetListNode(id entity.ID) (*entity.ListNode, error) {
 	return s.repo.Get(id)
 }

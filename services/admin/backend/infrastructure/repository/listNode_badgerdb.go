@@ -24,32 +24,17 @@
 package repository
 
 import (
-	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
+	badger "github.com/dgraph-io/badger/v3"
 )
 
-//inmem in memory repo
-type inmemdb struct {
-	m map[entity.ID]*entity.Organization
+//ListNodeBadgerDB
+type ListNodeBadgerDB struct {
+	db *badger.DB
 }
 
-//NewInmem create a new in memory repository
-func NewInmemDB() *inmemdb {
-	var m = map[entity.ID]*entity.Organization{}
-	return &inmemdb{
-		m: m,
+//NewListNodeBadgerDB create new repository
+func NewListNodeBadgerDB(db *badger.DB) *ListNodeBadgerDB {
+	return &ListNodeBadgerDB{
+		db: db,
 	}
-}
-
-//Create an organization
-func (r *inmemdb) Create(e *entity.Organization) (entity.ID, error) {
-	r.m[e.ID] = e
-	return e.ID, nil
-}
-
-//Get an organization
-func (r *inmemdb) Get(id entity.ID) (*entity.Organization, error) {
-	if r.m[id] == nil {
-		return nil, entity.ErrNotFound
-	}
-	return r.m[id], nil
 }

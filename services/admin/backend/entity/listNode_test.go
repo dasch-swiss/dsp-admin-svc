@@ -23,30 +23,20 @@
 
 package entity_test
 
-
 import (
+	"testing"
+
 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
-func TestNewOrganization(t *testing.T) {
-	org, err := entity.NewOrganization("TEST Org")
+func TestNewListNode(t *testing.T) {
+	node, err := entity.NewListNode("TEST name", "TEST label", "TEST comment")
 	assert.Nil(t, err)
-	assert.Equal(t, org.Name, "TEST Org")
-	assert.NotNil(t, org.ID)
-	assert.False(t, org.CreatedAt.IsZero())
-	assert.True(t, org.UpdatedAt.IsZero())
-}
-
-func TestAddPostalAddress(t *testing.T) {
-	org, err := entity.NewOrganization("new org")
-	assert.Nil(t, err)
-
-	err2 := org.AddPostalAddress("neue strasse 123", "4123", "Allschwil")
-	assert.Nil(t, err2)
-	assert.Equal(t, org.PostalAddresses.StreetAddress, "neue strasse 123")
-	assert.Equal(t, org.PostalAddresses.PostalCode, "4123")
-	assert.Equal(t, org.PostalAddresses.AddressLocality, "Allschwil")
-	assert.False(t, org.UpdatedAt.IsZero())
+	assert.Equal(t, node.Name, "TEST name")
+	assert.Equal(t, node.Label, "TEST label")
+	assert.Equal(t, node.Comment, "TEST comment")
+	assert.NotNil(t, node.ID)
+	assert.False(t, node.CreatedAt.IsZero())
+	assert.True(t, node.UpdatedAt.IsZero())
 }

@@ -21,29 +21,33 @@
  *
  */
 
-package organization
+package listNode
 
-import (
-	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
-	"github.com/stretchr/testify/assert"
-	"testing"
-	"time"
-)
+import "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
 
-func newFixtureOrganization() *entity.Organization {
-	return &entity.Organization{
-		ID:        entity.NewID(),
-		Name:      "TEST Organization",
-		CreatedAt: time.Now(),
+//inmem in memory repo
+type inmem struct {
+	m map[entity.ID]*entity.ListNode
+}
+
+//newInmem create a new in memory repository
+func newInmem() *inmem {
+	var m = map[entity.ID]*entity.ListNode{}
+	return &inmem{
+		m: m,
 	}
 }
 
-func Test_Create(t *testing.T) {
-	repo := newInmem()
-	service := NewService(repo)
-	org := newFixtureOrganization()
-	_, err := service.CreateOrganization(org.Name)
-	assert.Nil(t, err)
-	assert.False(t, org.CreatedAt.IsZero())
-	assert.True(t, org.UpdatedAt.IsZero())
+//Create a ListNode
+func (r *inmem) Create(e *entity.ListNode) (entity.ID, error) {
+	r.m[e.ID] = e
+	return e.ID, nil
+}
+
+//Get a ListNode
+func (r *inmem) Get(id entity.ID) (*entity.ListNode, error) {
+	if r.m[id] == nil {
+		return nil, entity.ErrNotFound
+	}
+	return r.m[id], nil
 }

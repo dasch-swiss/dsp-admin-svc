@@ -21,33 +21,34 @@
  *
  */
 
-package organization
+package listNode
 
-import "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
+import (
+	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
+)
 
-//inmem in memory repo
-type inmem struct {
-	m map[entity.ID]*entity.Organization
+//Reader interface
+type Reader interface {
+	Get(id entity.ID) (*entity.ListNode, error)
+	// Search(query string) ([]*entity.ListNode, error)
+	// List() ([]*entity.ListNode, error)
 }
 
-//newInmem create a new in memory repository
-func newInmem() *inmem {
-	var m = map[entity.ID]*entity.Organization{}
-	return &inmem{
-		m: m,
-	}
+//Writer interface
+type Writer interface {
+	Create(e *entity.ListNode) (entity.ID, error)
+	// Update(e *entity.ListNode) error
+	// Delete(e *entity.ID) error
 }
 
-//Create an organization
-func (r *inmem) Create(e *entity.Organization) (entity.ID, error) {
-	r.m[e.ID] = e
-	return e.ID, nil
+//Repository interface
+type Repository interface {
+	Reader
+	Writer
 }
 
-//Get an organization
-func (r *inmem) Get(id entity.ID) (*entity.Organization, error) {
-	if r.m[id] == nil {
-		return nil, entity.ErrNotFound
-	}
-	return r.m[id], nil
+//UseCase interface
+type UseCase interface {
+	GetListNode(id entity.ID) (*entity.ListNode, error)
+	CreateListNode(name string, label string, comment string) (entity.ID, error)
 }

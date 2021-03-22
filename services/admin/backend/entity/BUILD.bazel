@@ -5,8 +5,7 @@ go_library(
     srcs = [
         "entity.go",
         "error.go",
-        "organization.go",
-        "person.go",
+        "listNode.go",
     ],
     importpath = "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity",
     visibility = ["//visibility:public"],
@@ -16,8 +15,8 @@ go_library(
 )
 
 go_test(
-    name = "organization_test",
-    srcs = ["organization_test.go"],
+    name = "listNode_test",
+    srcs = ["listNode_test.go"],
     size = "small",
     visibility = ["//visibility:public"],
     embed = [":entity"],
