@@ -1,32 +1,10 @@
-/*
- * Copyright © 2021 the contributors.
- *
- *  This file is part of the DaSCH Service Platform.
- *
- *  The DaSCH Service Platform is free software: you can
- *  redistribute it and/or modify it under the terms of the
- *  GNU Affero General Public License as published by the
- *  Free Software Foundation, either version 3 of the License,
- *  or (at your option) any later version.
- *
- *  The DaSCH Service Platform is distributed in the hope that
- *  it will be useful, but WITHOUT ANY WARRANTY; without even
- *  the implied warranty of MERCHANTABILITY or FITNESS FOR
- *  A PARTICULAR PURPOSE.  See the GNU Affero General Public
- *  License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public
- *  License along with the DaSCH Service Platform.  If not, see
- *  <http://www.gnu.org/licenses/>.
- *
- */
-
 package handler
 
 import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/api/presenter"
 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
@@ -35,13 +13,13 @@ import (
 	"github.com/urfave/negroni"
 )
 
-func createListNode(service listNode.UseCase) http.Handler {
+func CreateListNode(service listNode.UseCase) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		errorMessage := "Error adding list node"
 		var input struct {
-			Name    string `json:"name"`
-			Label   string `json:"label"`
-			Comment string `json:"comment"`
+			Label     string    `json:"label"`
+			Comment   string    `json:"comment"`
+			CreatedAt time.Time `json:"createdAt"`
 		}
 		err := json.NewDecoder(r.Body).Decode(&input)
 		if err != nil {
@@ -50,7 +28,7 @@ func createListNode(service listNode.UseCase) http.Handler {
 			w.Write([]byte(errorMessage))
 			return
 		}
-		id, err := service.CreateListNode(input.Name, input.Label, input.Comment)
+		id, err := service.CreateListNode(input.Label, input.Comment)
 		if err != nil {
 			log.Println(err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
@@ -59,7 +37,6 @@ func createListNode(service listNode.UseCase) http.Handler {
 		}
 		toJ := &presenter.ListNode{
 			ID:      id,
-			Name:    input.Name,
 			Label:   input.Label,
 			Comment: input.Comment,
 		}
@@ -73,7 +50,7 @@ func createListNode(service listNode.UseCase) http.Handler {
 	})
 }
 
-func getListNode(service listNode.UseCase) http.Handler {
+func GetListNode(service listNode.UseCase) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		errorMessage := "Error reading list node"
 		vars := mux.Vars(r)
@@ -97,10 +74,10 @@ func getListNode(service listNode.UseCase) http.Handler {
 			return
 		}
 		toJ := &presenter.ListNode{
-			ID:      data.ID,
-			Name:    data.Name,
-			Label:   data.Label,
-			Comment: data.Comment,
+			ID:        data.ID,
+			Label:     data.Label,
+			Comment:   data.Comment,
+			CreatedAt: data.CreatedAt,
 		}
 		if err := json.NewEncoder(w).Encode(toJ); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -109,18 +86,18 @@ func getListNode(service listNode.UseCase) http.Handler {
 	})
 }
 
-//MakeUserHandlers make url handlers
+//MakeListNodeHandlers make url handlers
 func MakeListNodeHandlers(r *mux.Router, n negroni.Negroni, service listNode.UseCase) {
 	//r.Handle("/v1/user", n.With(
 	//	negroni.Wrap(listUsers(service)),
 	//)).Methods("GET", "OPTIONS").Name("listUsers")
 
 	r.Handle("/v1/listnode", n.With(
-		negroni.Wrap(createListNode(service)),
+		negroni.Wrap(CreateListNode(service)),
 	)).Methods("POST", "OPTIONS").Name("createListNode")
 
 	r.Handle("/v1/listnode/{id}", n.With(
-		negroni.Wrap(getListNode(service)),
+		negroni.Wrap(GetListNode(service)),
 	)).Methods("GET", "OPTIONS").Name("getListNode")
 
 	//r.Handle("/v1/user/{id}", n.With(
