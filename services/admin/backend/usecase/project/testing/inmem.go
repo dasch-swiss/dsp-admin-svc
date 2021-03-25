@@ -24,7 +24,7 @@ type inmem struct {
 }
 
 //newInmem create a new in memory repository
-func newInmem() *inmem {
+func NewInmem() *inmem {
 	var m = map[entity.ID]*entity.Project{}
 	return &inmem{
 		m: m,

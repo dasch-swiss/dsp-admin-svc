@@ -16,35 +16,35 @@
 
 package project_test
 
-// import (
-// 	"testing"
-// 	"time"
+import (
+	"testing"
+	"time"
 
-// 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
-// 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/project"
-// 	projTesting "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/project/testing"
-// 	"github.com/google/uuid"
-// 	"github.com/stretchr/testify/assert"
-// )
+	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
+	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/project"
+	projTesting "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/project/testing"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+)
 
-// func newMockProject() *entity.Project {
-// 	return &entity.Project{
-// 		ID:          entity.NewID(),
-// 		ShortCode:   "aabb",
-// 		CreatedBy:   entity.NewID(),
-// 		ShortName:   "short name",
-// 		LongName:    "long project name",
-// 		Description: "this is a mock project",
-// 		CreatedAt:   time.Now(),
-// 	}
-// }
+func newMockProject() *entity.Project {
+	return &entity.Project{
+		ID:          entity.NewID(),
+		ShortCode:   "aabb",
+		CreatedBy:   entity.NewID(),
+		ShortName:   "short name",
+		LongName:    "long project name",
+		Description: "this is a mock project",
+		CreatedAt:   time.Now(),
+	}
+}
 
-// func Test_Create(t *testing.T) {
-// 	repo := projTesting.NewInmem()      // storage
-// 	service := project.NewService(repo) // service implementation
-// 	proj := newMockProject()
-// 	_, err := service.CreateProject("aabb", uuid.New(), "short name", "long project name", "this is a mock project")
-// 	assert.Nil(t, err)
-// 	assert.False(t, proj.CreatedAt.IsZero())
-// 	assert.True(t, proj.UpdatedAt.IsZero())
-// }
+func Test_Create(t *testing.T) {
+	repo := projTesting.NewInmem()      // storage
+	service := project.NewService(repo) // service implementation
+	proj := newMockProject()
+	_, err := service.CreateProject("aabb", uuid.New(), "short name", "long project name", "this is a mock project")
+	assert.Nil(t, err)
+	assert.False(t, proj.CreatedAt.IsZero())
+	assert.True(t, proj.UpdatedAt.IsZero())
+}
