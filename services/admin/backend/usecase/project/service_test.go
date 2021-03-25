@@ -23,7 +23,6 @@ import (
 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/project"
 	projTesting "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/project/testing"
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -43,7 +42,7 @@ func Test_Create(t *testing.T) {
 	repo := projTesting.NewInmem()      // storage
 	service := project.NewService(repo) // service implementation
 	proj := newMockProject()
-	_, err := service.CreateProject("aabb", uuid.New(), "short name", "long project name", "this is a mock project")
+	_, err := service.CreateProject("aabb", entity.NewID(), "short name", "long project name", "this is a mock project")
 	assert.Nil(t, err)
 	assert.False(t, proj.CreatedAt.IsZero())
 	assert.True(t, proj.UpdatedAt.IsZero())
