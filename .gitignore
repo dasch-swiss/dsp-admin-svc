@@ -7,3 +7,4 @@ public/build
 .DS_Store
 /public/build/
 /pkg/
+/dasch-service-platform.code-workspace

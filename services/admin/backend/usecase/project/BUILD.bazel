@@ -1,0 +1,28 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "project",
+    srcs = [
+        "interface.go",
+        "service.go",
+    ],
+    importpath = "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/project",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//services/admin/backend/entity",
+    ],
+)
+
+go_test(
+    name = "service_test",
+    size = "small",
+    srcs = [
+        "service_test.go",
+    ],
+    embed = [":project"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//services/admin/backend/usecase/project/testing",
+        "@com_github_stretchr_testify//assert",
+    ],
+)

@@ -4,7 +4,7 @@ go_library(
     name = "repository",
     srcs = [
         # "organization_badgerdb.go",
-        "organization_inmem.go"
+        "organization_inmem.go",
     ],
     importpath = "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/infrastructure/repository",
     visibility = ["//visibility:public"],

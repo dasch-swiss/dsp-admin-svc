@@ -25,21 +25,24 @@ package main
 
 import (
 	"fmt"
-	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/api/handler"
-	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/api/middleware"
-	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/config"
-	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/infrastructure/repository"
-	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/organization"
-	"github.com/dasch-swiss/dasch-service-platform/shared/go/pkg/metric"
-	"github.com/gorilla/context"
-	"github.com/gorilla/mux"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/urfave/negroni"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/api/handler"
+	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/api/middleware"
+	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/config"
+	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/infrastructure/project_repository"
+	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/infrastructure/repository"
+	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/organization"
+	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/project"
+	"github.com/dasch-swiss/dasch-service-platform/shared/go/pkg/metric"
+	"github.com/gorilla/context"
+	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/urfave/negroni"
 )
 
 func main() {
@@ -51,7 +54,10 @@ func main() {
 	fmt.Println(path)
 
 	organizationRepository := repository.NewInmemDB()
+	projectRepository := project_repository.NewInmemDB()
+
 	organizationService := organization.NewService(organizationRepository)
+	projectService := project.NewService(projectRepository)
 
 	metricService, err := metric.NewPrometheusService()
 	if err != nil {
@@ -67,6 +73,7 @@ func main() {
 
 	//organization
 	handler.MakeOrganizationHandlers(r, *n, organizationService)
+	handler.MakeProjectHandlers(r, *n, projectService)
 
 	http.Handle("/", r)
 	http.Handle("/metrics", promhttp.Handler())
