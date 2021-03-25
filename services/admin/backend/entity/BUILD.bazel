@@ -6,8 +6,6 @@ go_library(
         "entity.go",
         "error.go",
         "project.go",
-        "organization.go",
-        "person.go",
     ],
     importpath = "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity",
     visibility = ["//visibility:public"],

@@ -35,8 +35,6 @@ import (
 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/api/middleware"
 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/config"
 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/infrastructure/project_repository"
-	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/infrastructure/repository"
-	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/organization"
 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/project"
 	"github.com/dasch-swiss/dasch-service-platform/shared/go/pkg/metric"
 	"github.com/gorilla/context"
@@ -53,10 +51,8 @@ func main() {
 	}
 	fmt.Println(path)
 
-	organizationRepository := repository.NewInmemDB()
 	projectRepository := project_repository.NewInmemDB()
 
-	organizationService := organization.NewService(organizationRepository)
 	projectService := project.NewService(projectRepository)
 
 	metricService, err := metric.NewPrometheusService()
@@ -71,8 +67,6 @@ func main() {
 		negroni.NewLogger(),
 	)
 
-	//organization
-	handler.MakeOrganizationHandlers(r, *n, organizationService)
 	handler.MakeProjectHandlers(r, *n, projectService)
 
 	http.Handle("/", r)
