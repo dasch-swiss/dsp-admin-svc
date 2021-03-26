@@ -43,3 +43,8 @@ func (s *Service) CreateProject(shortCode string, createdBy entity.ID, shortName
 func (s *Service) GetProject(id entity.ID) (*entity.Project, error) {
 	return s.repo.Get(id)
 }
+
+//GetProjects get all projects
+func (s *Service) GetAllProjects() ([]*entity.Project, error) {
+	return s.repo.GetAll()
+}

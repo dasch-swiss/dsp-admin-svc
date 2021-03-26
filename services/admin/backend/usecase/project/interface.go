@@ -23,6 +23,7 @@ import (
 //Reader interface
 type Reader interface {
 	Get(id entity.ID) (*entity.Project, error)
+	GetAll() ([]*entity.Project, error)
 }
 
 //Writer interface
@@ -39,5 +40,6 @@ type Repository interface {
 //UseCase interface
 type UseCase interface {
 	GetProject(id entity.ID) (*entity.Project, error)
+	GetAllProjects() ([]*entity.Project, error)
 	CreateProject(shortCode string, createdBy entity.ID, shortName string, longName string, description string) (entity.ID, error)
 }

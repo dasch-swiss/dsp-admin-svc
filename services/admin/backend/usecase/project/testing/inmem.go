@@ -44,3 +44,14 @@ func (r *inmem) Get(id entity.ID) (*entity.Project, error) {
 	}
 	return r.m[id], nil
 }
+
+//GetAll get all projects
+func (r *inmem) GetAll() ([]*entity.Project, error) {
+	ap := make([]*entity.Project, 0, len(r.m))
+
+	for _, val := range r.m {
+		ap = append(ap, val)
+	}
+
+	return ap, nil
+}
