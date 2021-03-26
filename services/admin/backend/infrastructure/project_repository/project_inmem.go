@@ -33,16 +33,27 @@ func NewInmemDB() *inmemdb {
 	}
 }
 
-//Create an organization
+//Create a project
 func (r *inmemdb) Create(e *entity.Project) (entity.ID, error) {
 	r.m[e.ID] = e
 	return e.ID, nil
 }
 
-//Get an organization
+//Get a project
 func (r *inmemdb) Get(id entity.ID) (*entity.Project, error) {
 	if r.m[id] == nil {
 		return nil, entity.ErrNotFound
 	}
 	return r.m[id], nil
+}
+
+//GetAll get all projects
+func (r *inmemdb) GetAll() ([]*entity.Project, error) {
+	ap := make([]*entity.Project, 0, len(r.m))
+
+	for _, val := range r.m {
+		ap = append(ap, val)
+	}
+
+	return ap, nil
 }

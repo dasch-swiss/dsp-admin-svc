@@ -33,3 +33,8 @@ type Project struct {
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
 }
+
+//Projects
+type Projects struct {
+	Projects []Project `json:"project"`
+}

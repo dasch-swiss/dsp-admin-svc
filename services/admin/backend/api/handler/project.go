@@ -96,6 +96,39 @@ func getProject(service project.UseCase) http.Handler {
 	})
 }
 
+func getAllProjects(service project.UseCase) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		errorMessage := "Error reading projects"
+		data, err := service.GetAllProjects()
+
+		w.Header().Set("Content-Type", "application/json")
+		if err != nil && err != entity.ErrNotFound {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errorMessage))
+			return
+		}
+
+		if data == nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte(errorMessage))
+			return
+		}
+
+		// initialize struct from presenter to later encode as JSON to return
+		toJ := &presenter.Projects{}
+
+		// loop through each project in 'data' and add it to the array of projects
+		for _, project := range data {
+			toJ.Projects = append(toJ.Projects, presenter.Project(*project))
+		}
+
+		if err := json.NewEncoder(w).Encode(toJ); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errorMessage))
+		}
+	})
+}
+
 //MakeProjectHandlers make url handlers
 func MakeProjectHandlers(r *mux.Router, n negroni.Negroni, service project.UseCase) {
 
@@ -106,5 +139,9 @@ func MakeProjectHandlers(r *mux.Router, n negroni.Negroni, service project.UseCa
 	r.Handle("/v1/project/{id}", n.With(
 		negroni.Wrap(getProject(service)),
 	)).Methods("GET", "OPTIONS").Name("getProject")
+
+	r.Handle("/v1/projects", n.With(
+		negroni.Wrap(getAllProjects(service)),
+	)).Methods("GET", "OPTIONS").Name("getAllProjects")
 
 }
