@@ -22,7 +22,7 @@ import (
 	"github.com/google/uuid"
 )
 
-//Person domain entity
+//Project domain entity
 type Project struct {
 	ID          ID
 	ShortCode   string
@@ -51,6 +51,12 @@ func NewProject(shortCode string, createdBy ID, shortName string, longName strin
 		return nil, ErrInvalidEntity
 	}
 
+	return proj, nil
+}
+
+func (proj *Project) UpdateProject(updatedProject Project) (*Project, error) {
+	proj = &updatedProject
+	proj.UpdatedAt = time.Now()
 	return proj, nil
 }
 

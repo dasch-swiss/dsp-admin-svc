@@ -36,3 +36,18 @@ func TestCreateProject(t *testing.T) {
 	assert.False(t, proj.CreatedAt.IsZero())
 	assert.True(t, proj.UpdatedAt.IsZero())
 }
+
+func TestUpdateProject(t *testing.T) {
+	proj, err := entity.NewProject("aabb", uuid.New(), "short name", "long project name", "this is a test project")
+	assert.Nil(t, err)
+
+	updatedProj, err2 := proj.UpdateProject(entity.Project{proj.ID, "ccdd", proj.CreatedBy, proj.ShortName, proj.LongName, proj.Description, proj.CreatedAt, proj.UpdatedAt})
+	assert.Nil(t, err2)
+	assert.Equal(t, updatedProj.ShortCode, "ccdd")
+	assert.NotNil(t, updatedProj.CreatedBy)
+	assert.Equal(t, updatedProj.ShortName, "short name")
+	assert.Equal(t, updatedProj.LongName, "long project name")
+	assert.Equal(t, updatedProj.Description, "this is a test project")
+	assert.False(t, updatedProj.CreatedAt.IsZero())
+	assert.False(t, updatedProj.UpdatedAt.IsZero())
+}
