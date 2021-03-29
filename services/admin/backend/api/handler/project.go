@@ -57,26 +57,39 @@ func createProject(service project.UseCase) http.Handler {
 func updateProject(service project.UseCase) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		errorMessage := "Error updating project"
+
+		// get id from url
+		vars := mux.Vars(r)
+		id, paramsErr := entity.StringToID(vars["id"])
+		if paramsErr != nil {
+			log.Println(paramsErr.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errorMessage))
+			return
+		}
+
+		// get project info from the body
 		var input struct {
-			ProjectID         entity.ID      `json:"id"`
 			UpdateProjectInfo entity.Project `json:"project"`
 		}
-		err := json.NewDecoder(r.Body).Decode(&input)
-		if err != nil {
-			log.Println(err.Error())
+		inputErr := json.NewDecoder(r.Body).Decode(&input)
+		if inputErr != nil {
+			log.Println(inputErr.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(errorMessage))
 			return
 		}
-		updatedProject, err := service.UpdateProject(input.ProjectID, &input.UpdateProjectInfo)
-		if err != nil {
-			log.Println(err.Error())
+
+		updatedProject, inputErr := service.UpdateProject(id, &input.UpdateProjectInfo)
+		if inputErr != nil {
+			log.Println(inputErr.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(errorMessage))
 			return
 		}
+
 		toJ := &presenter.Project{
-			ID:          input.ProjectID,
+			ID:          id,
 			ShortCode:   updatedProject.ShortCode,
 			CreatedBy:   updatedProject.CreatedBy,
 			ShortName:   updatedProject.ShortName,
