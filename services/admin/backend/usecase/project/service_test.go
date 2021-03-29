@@ -18,7 +18,6 @@ package project_test
 
 import (
 	"testing"
-	"time"
 
 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/usecase/project"
@@ -26,61 +25,81 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func newMockProject() *entity.Project {
-	return &entity.Project{
-		ID:          entity.NewID(),
-		ShortCode:   "aabb",
-		CreatedBy:   entity.NewID(),
-		ShortName:   "short name",
-		LongName:    "long project name",
-		Description: "this is a mock project",
-		CreatedAt:   time.Now(),
-	}
-}
-
-func newMockProject2() *entity.Project {
-	return &entity.Project{
-		ID:          entity.NewID(),
-		ShortCode:   "ccdd",
-		CreatedBy:   entity.NewID(),
-		ShortName:   "short name 2",
-		LongName:    "long project name 2",
-		Description: "this is a mock project 2",
-		CreatedAt:   time.Now(),
-	}
-}
-
 func Test_Create(t *testing.T) {
-	repo := projTesting.NewInmem()      // storage
-	service := project.NewService(repo) // service implementation
-	proj := newMockProject()
-	_, err := service.CreateProject(proj.ShortCode, proj.CreatedBy, proj.ShortName, proj.LongName, proj.Description)
+	// storage
+	repo := projTesting.NewInmem()
+
+	// service implementation
+	service := project.NewService(repo)
+
+	// add to Inmem db
+	uuid, err := service.CreateProject("aabb", entity.NewID(), "short name", "long project name", "this is a test project")
+
+	// assert there is no error
 	assert.Nil(t, err)
+
+	// assert that a uuid was returned
+	// maybe this should check if the uuid is actually valid
+	assert.NotNil(t, uuid)
+}
+
+// func Test_Create_Failure(t *testing.T) {
+// 	// storage
+// 	repo := projTesting.NewInmem()
+
+// 	// service implementation
+// 	service := project.NewService(repo)
+
+// 	// add invalid project to Inmem db
+// 	_, err := service.CreateProject("", entity.NewID(), "short name", "long project name", "this is a test project")
+
+// 	// assert there is an error
+// 	assert.NotNil(t, err)
+// }
+
+func Test_Update(t *testing.T) {
+	repo := projTesting.NewInmem()
+	service := project.NewService(repo)
+	userID := entity.NewID()
+	uuid, err := service.CreateProject("aabb", userID, "short name", "long project name", "this is a test project")
+	assert.Nil(t, err)
+
+	proj, err2 := service.UpdateProject(uuid, &entity.Project{
+		ShortCode:   "ccdd",
+		ShortName:   "new short name",
+		LongName:    "new long project name",
+		Description: "new description",
+	})
+
+	assert.Nil(t, err2)
+	assert.Equal(t, proj.ID, uuid)
+	assert.Equal(t, proj.ShortCode, "ccdd")
+	assert.Equal(t, proj.CreatedBy, userID)
+	assert.Equal(t, proj.ShortName, "new short name")
+	assert.Equal(t, proj.LongName, "new long project name")
+	assert.Equal(t, proj.Description, "new description")
 	assert.False(t, proj.CreatedAt.IsZero())
-	assert.True(t, proj.UpdatedAt.IsZero())
+	assert.False(t, proj.UpdatedAt.IsZero())
 }
 
 func Test_Get(t *testing.T) {
 	repo := projTesting.NewInmem()      // storage
 	service := project.NewService(repo) // service implementation
-	proj := newMockProject()
-	uuid, err := service.CreateProject(proj.ShortCode, proj.CreatedBy, proj.ShortName, proj.LongName, proj.Description)
+	uuid, err := service.CreateProject("aabb", entity.NewID(), "short name", "long project name", "this is a test project")
 	assert.Nil(t, err)
 	p, err2 := service.GetProject(uuid)
 	assert.Nil(t, err2)
-	assert.Equal(t, p.LongName, proj.LongName)
+	assert.Equal(t, p.LongName, "long project name")
 }
 
 func Test_GetAll(t *testing.T) {
 	repo := projTesting.NewInmem()      // storage
 	service := project.NewService(repo) // service implementation
 
-	proj := newMockProject()
-	_, err := service.CreateProject(proj.ShortCode, proj.CreatedBy, proj.ShortName, proj.LongName, proj.Description)
+	_, err := service.CreateProject("aabb", entity.NewID(), "short name", "long project name", "this is a test project")
 	assert.Nil(t, err)
 
-	proj2 := newMockProject2()
-	_, err2 := service.CreateProject(proj2.ShortCode, proj2.CreatedBy, proj2.ShortName, proj2.LongName, proj2.Description)
+	_, err2 := service.CreateProject("ccdd", entity.NewID(), "short name 2", "long project name 2", "this is a test project 2")
 	assert.Nil(t, err2)
 
 	ap, err3 := service.GetAllProjects()

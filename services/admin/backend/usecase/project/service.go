@@ -39,6 +39,25 @@ func (s *Service) CreateProject(shortCode string, createdBy entity.ID, shortName
 	return s.repo.Create(e)
 }
 
+//UpdateProject update a project
+func (s *Service) UpdateProject(id entity.ID, updateProjectInfo *entity.Project) (*entity.Project, error) {
+
+	// get the project from the db via the provided id
+	projectToUpdate, getProjectError := s.repo.Get(id)
+	if getProjectError != nil {
+		return projectToUpdate, getProjectError
+	}
+
+	// update the project with the provided updateProjectInfo
+	updatedProject, updateProjectError := projectToUpdate.UpdateProject(*updateProjectInfo)
+	if updateProjectError != nil {
+		return updatedProject, updateProjectError
+	}
+
+	// replace the now outdated project with the updated project in the db
+	return s.repo.Update(id, updatedProject)
+}
+
 //GetProject get a project
 func (s *Service) GetProject(id entity.ID) (*entity.Project, error) {
 	return s.repo.Get(id)

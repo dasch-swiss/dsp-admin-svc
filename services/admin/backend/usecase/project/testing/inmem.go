@@ -37,6 +37,12 @@ func (r *inmem) Create(e *entity.Project) (entity.ID, error) {
 	return e.ID, nil
 }
 
+//Update a project
+func (r *inmem) Update(id entity.ID, data *entity.Project) (*entity.Project, error) {
+	r.m[id] = data
+	return r.m[id], nil
+}
+
 //Get a project
 func (r *inmem) Get(id entity.ID) (*entity.Project, error) {
 	if r.m[id] == nil {

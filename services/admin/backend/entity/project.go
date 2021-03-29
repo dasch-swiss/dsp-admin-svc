@@ -17,6 +17,7 @@
 package entity
 
 import (
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -54,9 +55,28 @@ func NewProject(shortCode string, createdBy ID, shortName string, longName strin
 	return proj, nil
 }
 
-func (proj *Project) UpdateProject(updatedProject Project) (*Project, error) {
-	proj = &updatedProject
+func (proj *Project) UpdateProject(updateProjectInfo Project) (*Project, error) {
+
+	// only update these properties if the a non-empty string was provided
+	if strings.TrimSpace(updateProjectInfo.ShortCode) != "" {
+		proj.ShortCode = updateProjectInfo.ShortCode
+	}
+
+	if strings.TrimSpace(updateProjectInfo.ShortName) != "" {
+		proj.ShortName = updateProjectInfo.ShortName
+	}
+
+	if strings.TrimSpace(updateProjectInfo.LongName) != "" {
+		proj.LongName = updateProjectInfo.LongName
+	}
+
+	if strings.TrimSpace(updateProjectInfo.Description) != "" {
+		proj.Description = updateProjectInfo.Description
+	}
+
+	// assign current time to UpdateAt property
 	proj.UpdatedAt = time.Now()
+
 	return proj, nil
 }
 

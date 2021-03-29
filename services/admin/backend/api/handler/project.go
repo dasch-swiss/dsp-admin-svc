@@ -24,13 +24,11 @@ func createProject(service project.UseCase) http.Handler {
 		}
 		err := json.NewDecoder(r.Body).Decode(&input)
 		if err != nil {
-			log.Println("ERROR")
 			log.Println(err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(errorMessage))
 			return
 		}
-		log.Println(input)
 		id, err := service.CreateProject(input.ShortCode, input.CreatedBy, input.ShortName, input.LongName, input.Description)
 		if err != nil {
 			log.Println(err.Error())
@@ -56,6 +54,47 @@ func createProject(service project.UseCase) http.Handler {
 	})
 }
 
+func updateProject(service project.UseCase) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		errorMessage := "Error updating project"
+		var input struct {
+			ProjectID         entity.ID      `json:"id"`
+			UpdateProjectInfo entity.Project `json:"project"`
+		}
+		err := json.NewDecoder(r.Body).Decode(&input)
+		if err != nil {
+			log.Println(err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errorMessage))
+			return
+		}
+		updatedProject, err := service.UpdateProject(input.ProjectID, &input.UpdateProjectInfo)
+		if err != nil {
+			log.Println(err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errorMessage))
+			return
+		}
+		toJ := &presenter.Project{
+			ID:          input.ProjectID,
+			ShortCode:   updatedProject.ShortCode,
+			CreatedBy:   updatedProject.CreatedBy,
+			ShortName:   updatedProject.ShortName,
+			LongName:    updatedProject.LongName,
+			Description: updatedProject.Description,
+			CreatedAt:   updatedProject.CreatedAt,
+			UpdatedAt:   updatedProject.UpdatedAt,
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		if err := json.NewEncoder(w).Encode(toJ); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errorMessage))
+			return
+		}
+	})
+}
+
 func getProject(service project.UseCase) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		errorMessage := "Error reading project"
@@ -66,7 +105,7 @@ func getProject(service project.UseCase) http.Handler {
 			w.Write([]byte(errorMessage))
 			return
 		}
-		data, err := service.GetProject(id)
+		project, err := service.GetProject(id)
 		w.Header().Set("Content-Type", "application/json")
 		if err != nil && err != entity.ErrNotFound {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -74,20 +113,20 @@ func getProject(service project.UseCase) http.Handler {
 			return
 		}
 
-		if data == nil {
+		if project == nil {
 			w.WriteHeader(http.StatusNotFound)
 			w.Write([]byte(errorMessage))
 			return
 		}
 		toJ := &presenter.Project{
-			ID:          data.ID,
-			ShortCode:   data.ShortCode,
-			CreatedBy:   data.CreatedBy,
-			ShortName:   data.ShortName,
-			LongName:    data.LongName,
-			Description: data.Description,
-			CreatedAt:   data.CreatedAt,
-			UpdatedAt:   data.UpdatedAt,
+			ID:          project.ID,
+			ShortCode:   project.ShortCode,
+			CreatedBy:   project.CreatedBy,
+			ShortName:   project.ShortName,
+			LongName:    project.LongName,
+			Description: project.Description,
+			CreatedAt:   project.CreatedAt,
+			UpdatedAt:   project.UpdatedAt,
 		}
 		if err := json.NewEncoder(w).Encode(toJ); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -99,7 +138,7 @@ func getProject(service project.UseCase) http.Handler {
 func getAllProjects(service project.UseCase) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		errorMessage := "Error reading projects"
-		data, err := service.GetAllProjects()
+		projects, err := service.GetAllProjects()
 
 		w.Header().Set("Content-Type", "application/json")
 		if err != nil && err != entity.ErrNotFound {
@@ -108,7 +147,7 @@ func getAllProjects(service project.UseCase) http.Handler {
 			return
 		}
 
-		if data == nil {
+		if projects == nil {
 			w.WriteHeader(http.StatusNotFound)
 			w.Write([]byte(errorMessage))
 			return
@@ -118,7 +157,7 @@ func getAllProjects(service project.UseCase) http.Handler {
 		toJ := &presenter.Projects{}
 
 		// loop through each project in 'data' and add it to the array of projects
-		for _, project := range data {
+		for _, project := range projects {
 			toJ.Projects = append(toJ.Projects, presenter.Project(*project))
 		}
 
@@ -135,6 +174,10 @@ func MakeProjectHandlers(r *mux.Router, n negroni.Negroni, service project.UseCa
 	r.Handle("/v1/project", n.With(
 		negroni.Wrap(createProject(service)),
 	)).Methods("POST", "OPTIONS").Name("createProject")
+
+	r.Handle("/v1/project/{id}", n.With(
+		negroni.Wrap(updateProject(service)),
+	)).Methods("PUT", "OPTIONS").Name("updateProject")
 
 	r.Handle("/v1/project/{id}", n.With(
 		negroni.Wrap(getProject(service)),
