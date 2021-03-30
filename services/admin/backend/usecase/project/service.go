@@ -16,7 +16,10 @@
 
 package project
 
-import "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
+import (
+	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
+	"github.com/google/uuid"
+)
 
 //Service interface
 type Service struct {
@@ -34,7 +37,7 @@ func NewService(r Repository) *Service {
 func (s *Service) CreateProject(shortCode string, createdBy entity.ID, shortName string, longName string, description string) (entity.ID, error) {
 	e, err := entity.NewProject(shortCode, createdBy, shortName, longName, description)
 	if err != nil {
-		return e.ID, err
+		return uuid.Nil, err
 	}
 	return s.repo.Create(e)
 }
@@ -45,7 +48,7 @@ func (s *Service) UpdateProject(id entity.ID, updateProjectInfo *entity.Project)
 	// get the project from the db via the provided id
 	projectToUpdate, getProjectError := s.repo.Get(id)
 	if getProjectError != nil {
-		return projectToUpdate, getProjectError
+		return nil, getProjectError
 	}
 
 	// update the project with the provided updateProjectInfo
@@ -68,10 +71,11 @@ func (s *Service) GetAllProjects() ([]*entity.Project, error) {
 	return s.repo.GetAll()
 }
 
+//DeleteProject deletes a project
 func (s *Service) DeleteProject(id entity.ID) (*entity.DeletedProject, error) {
 	dp, err := entity.DeleteProject(id)
 	if err != nil {
-		return dp, err
+		return nil, err
 	}
 	return s.repo.Delete(dp)
 }

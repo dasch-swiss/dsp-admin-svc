@@ -20,56 +20,59 @@ import (
 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
 )
 
-//inmem in memory repo
+//inmemdb in memory repo
 type inmemdb struct {
-	m map[entity.ID]*entity.Project
+	projects map[entity.ID]*entity.Project
 }
 
-//NewInmem create a new in memory repository
+//NewInmemDB create a new in memory repository
 func NewInmemDB() *inmemdb {
-	var m = map[entity.ID]*entity.Project{}
+	var newProjectsMap = map[entity.ID]*entity.Project{}
 	return &inmemdb{
-		m: m,
+		projects: newProjectsMap,
 	}
 }
 
 //Create a project
-func (r *inmemdb) Create(e *entity.Project) (entity.ID, error) {
-	r.m[e.ID] = e
-	return e.ID, nil
+func (repository *inmemdb) Create(project *entity.Project) (entity.ID, error) {
+	repository.projects[project.ID] = project
+	return project.ID, nil
 }
 
 //Update a project
-func (r *inmemdb) Update(id entity.ID, updatedProject *entity.Project) (*entity.Project, error) {
-	// find project using the provided id and replace it with the provided updatedProject
-	r.m[id] = updatedProject
-	return r.m[id], nil
+//project contains the updated project
+func (respository *inmemdb) Update(id entity.ID, project *entity.Project) (*entity.Project, error) {
+	respository.projects[id] = project
+	return respository.projects[id], nil
 }
 
 //Get a project
-func (r *inmemdb) Get(id entity.ID) (*entity.Project, error) {
-	if r.m[id] == nil {
+func (respository *inmemdb) Get(id entity.ID) (*entity.Project, error) {
+	if respository.projects[id] == nil {
 		return nil, entity.ErrNotFound
 	}
-	return r.m[id], nil
+	return respository.projects[id], nil
 }
 
 //GetAll get all projects
-func (r *inmemdb) GetAll() ([]*entity.Project, error) {
-	ap := make([]*entity.Project, 0, len(r.m))
+func (respository *inmemdb) GetAll() ([]*entity.Project, error) {
+	allProjects := make([]*entity.Project, 0, len(respository.projects))
 
-	for _, val := range r.m {
-		ap = append(ap, val)
+	for _, val := range respository.projects {
+		allProjects = append(allProjects, val)
 	}
 
-	return ap, nil
+	return allProjects, nil
 }
 
 //Delete a project
-func (r *inmemdb) Delete(projectToDelete *entity.DeletedProject) (*entity.DeletedProject, error) {
-	if r.m[projectToDelete.ID] == nil {
+//deletedProject is the project to be deleted
+func (respository *inmemdb) Delete(deletedProject *entity.DeletedProject) (*entity.DeletedProject, error) {
+	//make sure the key exists
+	if respository.projects[deletedProject.ID] == nil {
 		return nil, entity.ErrNotFound
 	}
-	delete(r.m, projectToDelete.ID)
-	return projectToDelete, nil
+
+	delete(respository.projects, deletedProject.ID)
+	return deletedProject, nil
 }

@@ -36,7 +36,7 @@ func createProject(service project.UseCase) http.Handler {
 			w.Write([]byte(errorMessage))
 			return
 		}
-		toJ := &presenter.Project{
+		toJson := &presenter.Project{
 			ID:          id,
 			ShortCode:   input.ShortCode,
 			CreatedBy:   input.CreatedBy,
@@ -46,7 +46,7 @@ func createProject(service project.UseCase) http.Handler {
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		if err := json.NewEncoder(w).Encode(toJ); err != nil {
+		if err := json.NewEncoder(w).Encode(toJson); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(errorMessage))
 			return
@@ -88,7 +88,7 @@ func updateProject(service project.UseCase) http.Handler {
 			return
 		}
 
-		toJ := &presenter.Project{
+		toJson := &presenter.Project{
 			ID:          id,
 			ShortCode:   updatedProject.ShortCode,
 			CreatedBy:   updatedProject.CreatedBy,
@@ -100,7 +100,7 @@ func updateProject(service project.UseCase) http.Handler {
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		if err := json.NewEncoder(w).Encode(toJ); err != nil {
+		if err := json.NewEncoder(w).Encode(toJson); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(errorMessage))
 			return
@@ -134,7 +134,7 @@ func getProject(service project.UseCase) http.Handler {
 			}
 		}
 
-		toJ := &presenter.Project{
+		toJson := &presenter.Project{
 			ID:          project.ID,
 			ShortCode:   project.ShortCode,
 			CreatedBy:   project.CreatedBy,
@@ -144,7 +144,7 @@ func getProject(service project.UseCase) http.Handler {
 			CreatedAt:   project.CreatedAt,
 			UpdatedAt:   project.UpdatedAt,
 		}
-		if err := json.NewEncoder(w).Encode(toJ); err != nil {
+		if err := json.NewEncoder(w).Encode(toJson); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(errorMessage))
 		}
@@ -170,14 +170,14 @@ func getAllProjects(service project.UseCase) http.Handler {
 		}
 
 		// initialize struct from presenter to later encode as JSON to return
-		toJ := &presenter.Projects{}
+		toJson := &presenter.Projects{}
 
-		// loop through each project in 'data' and add it to the array of projects
+		// loop through each project in 'projects' and add it to the array of projects
 		for _, project := range projects {
-			toJ.Projects = append(toJ.Projects, presenter.Project(*project))
+			toJson.Projects = append(toJson.Projects, presenter.Project(*project))
 		}
 
-		if err := json.NewEncoder(w).Encode(toJ); err != nil {
+		if err := json.NewEncoder(w).Encode(toJson); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(errorMessage))
 		}
@@ -211,11 +211,11 @@ func deleteProject(service project.UseCase) http.Handler {
 			}
 		}
 
-		toJ := &presenter.DeleteProjectResponse{
+		toJson := &presenter.DeleteProjectResponse{
 			ID:        deleteResponse.ID,
 			DeletedAt: deleteResponse.DeletedAt,
 		}
-		if err := json.NewEncoder(w).Encode(toJ); err != nil {
+		if err := json.NewEncoder(w).Encode(toJson); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(errorMessage))
 		}

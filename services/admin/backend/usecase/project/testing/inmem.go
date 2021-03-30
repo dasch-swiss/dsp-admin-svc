@@ -22,54 +22,57 @@ import (
 
 //inmem in memory repo
 type inmem struct {
-	m map[entity.ID]*entity.Project
+	projects map[entity.ID]*entity.Project
 }
 
 //newInmem create a new in memory repository
 func NewInmem() *inmem {
-	var m = map[entity.ID]*entity.Project{}
+	var newProjectsMap = map[entity.ID]*entity.Project{}
 	return &inmem{
-		m: m,
+		projects: newProjectsMap,
 	}
 }
 
 //Create a project
-func (r *inmem) Create(e *entity.Project) (entity.ID, error) {
-	r.m[e.ID] = e
-	return e.ID, nil
+func (repository *inmem) Create(project *entity.Project) (entity.ID, error) {
+	repository.projects[project.ID] = project
+	return project.ID, nil
 }
 
 //Update a project
-func (r *inmem) Update(id entity.ID, data *entity.Project) (*entity.Project, error) {
-	r.m[id] = data
-	return r.m[id], nil
+//project contains the updated project
+func (respository *inmem) Update(id entity.ID, project *entity.Project) (*entity.Project, error) {
+	respository.projects[id] = project
+	return respository.projects[id], nil
 }
 
 //Get a project
-func (r *inmem) Get(id entity.ID) (*entity.Project, error) {
-	if r.m[id] == nil {
+func (respository *inmem) Get(id entity.ID) (*entity.Project, error) {
+	if respository.projects[id] == nil {
 		return nil, entity.ErrNotFound
 	}
-	return r.m[id], nil
+	return respository.projects[id], nil
 }
 
 //GetAll get all projects
-func (r *inmem) GetAll() ([]*entity.Project, error) {
-	ap := make([]*entity.Project, 0, len(r.m))
+func (respository *inmem) GetAll() ([]*entity.Project, error) {
+	allProjects := make([]*entity.Project, 0, len(respository.projects))
 
-	for _, val := range r.m {
-		ap = append(ap, val)
+	for _, val := range respository.projects {
+		allProjects = append(allProjects, val)
 	}
 
-	return ap, nil
+	return allProjects, nil
 }
 
 //Delete a project
-// dp is the project to be deleted
-func (r *inmem) Delete(dp *entity.DeletedProject) (*entity.DeletedProject, error) {
-	if r.m[dp.ID] == nil {
+//deletedProject is the project to be deleted
+func (respository *inmem) Delete(deletedProject *entity.DeletedProject) (*entity.DeletedProject, error) {
+	//make sure the key exists
+	if respository.projects[deletedProject.ID] == nil {
 		return nil, entity.ErrNotFound
 	}
-	delete(r.m, dp.ID)
-	return dp, nil
+
+	delete(respository.projects, deletedProject.ID)
+	return deletedProject, nil
 }

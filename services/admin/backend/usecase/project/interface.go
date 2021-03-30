@@ -21,12 +21,14 @@ import (
 )
 
 //Reader interface
+//used in db
 type Reader interface {
 	Get(id entity.ID) (*entity.Project, error)
 	GetAll() ([]*entity.Project, error)
 }
 
 //Writer interface
+//used in db
 type Writer interface {
 	Create(e *entity.Project) (entity.ID, error)
 	Update(id entity.ID, e *entity.Project) (*entity.Project, error)
@@ -40,6 +42,7 @@ type Repository interface {
 }
 
 //UseCase interface
+//used in service
 type UseCase interface {
 	GetProject(id entity.ID) (*entity.Project, error)
 	GetAllProjects() ([]*entity.Project, error)

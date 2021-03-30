@@ -10,6 +10,7 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//services/admin/backend/entity",
+        "@com_github_google_uuid//:uuid",
     ],
 )
 
