@@ -16,7 +16,6 @@
   ];
 
   const toggleCetegory = (cat: Category) => (event: MouseEvent) => {
-    console.log(cat)
     let bool = cat.isOpen;
     categories[cat.id - 1].isOpen = !bool;
   };

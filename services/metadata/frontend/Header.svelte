@@ -1,9 +1,11 @@
 <script lang="ts">
   import Category from "./content/Category.svelte";
+  import { getProjects } from "./content/stores";
 
   let showSearchbar = false;
   let showFilters = false;
   let showMenu = false;
+  let enteredString = '';
 
   function toggleSearchbar() {
     showSearchbar = !showSearchbar;
@@ -22,6 +24,12 @@
     showFilters = false;
     showSearchbar = false;
   }
+
+  let search = (e: Event) => {
+    const q = (e.target as HTMLInputElement).value;
+    getProjects(1, q);
+    enteredString = '';
+  }
 </script>
 
 <header>
@@ -32,7 +40,7 @@
       <h1 class="title">Repository Explorer</h1>
     </a>
     <div class="header-right">
-      <input class="searchbar-in-header xs-inline-block" type="text" name="searchbar" placeholder="search..." />
+      <input on:change={search} bind:value={enteredString} class="searchbar-in-header xs-inline-block" type="text" name="searchbar" placeholder="search..." />
       <!-- searchbar button -->
       <button class="xs-hidden" on:click="{toggleSearchbar}">
         <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -54,7 +62,7 @@
     </div>
   </div>
   <div class="searchbar-container xs-hidden" class:hidden={!showSearchbar}>
-    <input type="text" class="searchbar" name="searchbar" placeholder="search...">
+    <input on:change={search} bind:value={enteredString} class="searchbar" name="searchbar" placeholder="search..." />
   </div>
   <div class="filter-container m-hidden" class:hidden={!showFilters}>
     <Category/>

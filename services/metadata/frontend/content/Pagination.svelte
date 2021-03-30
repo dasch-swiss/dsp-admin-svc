@@ -8,7 +8,7 @@
   let currentResults = baseResultsRange;
 
   let handlePagination = (event: MouseEvent) => {
-    let id = (event.target as HTMLElement).id;
+    const id = (event.target as HTMLElement).id;
     if (currentPage === Number(id)) {
       return;
     } else if (id === 'first') {
@@ -23,7 +23,6 @@
     document.getElementById((currentPage).toString()).classList.add('active');
     getProjects(currentPage);
     currentResults = baseResultsRange.map(v => v + ((currentPage - 1) * baseResultsRange[1]));
-    console.log(currentPage, currentResults)
   }
 </script>
 
