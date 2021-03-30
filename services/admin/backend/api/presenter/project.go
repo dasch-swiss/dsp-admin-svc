@@ -36,7 +36,7 @@ type Project struct {
 
 //Projects
 type Projects struct {
-	Projects []Project `json:"project"`
+	Projects []Project `json:"projects"`
 }
 
 //Delete Response

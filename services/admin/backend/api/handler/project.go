@@ -111,6 +111,7 @@ func updateProject(service project.UseCase) http.Handler {
 func getProject(service project.UseCase) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		errorMessage := "Error reading project"
+		notFoundErrorMessage := "Project not found"
 		vars := mux.Vars(r)
 		id, err := entity.StringToID(vars["id"])
 		if err != nil {
@@ -120,17 +121,19 @@ func getProject(service project.UseCase) http.Handler {
 		}
 		project, err := service.GetProject(id)
 		w.Header().Set("Content-Type", "application/json")
-		if err != nil && err != entity.ErrNotFound {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(errorMessage))
-			return
+
+		if err != nil {
+			if err == entity.ErrNotFound {
+				w.WriteHeader(http.StatusNotFound)
+				w.Write([]byte(notFoundErrorMessage))
+				return
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte(errorMessage))
+				return
+			}
 		}
 
-		if project == nil {
-			w.WriteHeader(http.StatusNotFound)
-			w.Write([]byte(errorMessage))
-			return
-		}
 		toJ := &presenter.Project{
 			ID:          project.ID,
 			ShortCode:   project.ShortCode,
@@ -184,6 +187,7 @@ func getAllProjects(service project.UseCase) http.Handler {
 func deleteProject(service project.UseCase) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		errorMessage := "Error deleting project"
+		notFoundErrorMessage := "Project not found"
 
 		vars := mux.Vars(r)
 		id, err := entity.StringToID(vars["id"])
@@ -195,15 +199,16 @@ func deleteProject(service project.UseCase) http.Handler {
 
 		deleteResponse, err := service.DeleteProject(id)
 		w.Header().Set("Content-Type", "application/json")
-		if err != nil && err != entity.ErrNotFound {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(errorMessage))
-			return
-		}
-		if deleteResponse == nil {
-			w.WriteHeader(http.StatusNotFound)
-			w.Write([]byte(errorMessage))
-			return
+		if err != nil {
+			if err == entity.ErrNotFound {
+				w.WriteHeader(http.StatusNotFound)
+				w.Write([]byte(notFoundErrorMessage))
+				return
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte(errorMessage))
+				return
+			}
 		}
 
 		toJ := &presenter.DeleteProjectResponse{

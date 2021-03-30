@@ -33,12 +33,3 @@ var ErrInvalidEntity = errors.New("invalid entity")
 
 //ErrCannotBeDeleted cannot be deleted
 var ErrCannotBeDeleted = errors.New("cannot be deleted")
-
-//ErrNotEnoughBooks cannot borrow
-var ErrNotEnoughBooks = errors.New("not enough books")
-
-//ErrPostalAddressNotSet cannot be deleted
-var ErrPostalAddressNotSet = errors.New("postal address is not set")
-
-//ErrBookNotBorrowed cannot return
-var ErrBookNotBorrowed = errors.New("book not borrowed")
