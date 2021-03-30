@@ -181,6 +181,42 @@ func getAllProjects(service project.UseCase) http.Handler {
 	})
 }
 
+func deleteProject(service project.UseCase) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		errorMessage := "Error deleting project"
+
+		vars := mux.Vars(r)
+		id, err := entity.StringToID(vars["id"])
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errorMessage))
+			return
+		}
+
+		deleteResponse, err := service.DeleteProject(id)
+		w.Header().Set("Content-Type", "application/json")
+		if err != nil && err != entity.ErrNotFound {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errorMessage))
+			return
+		}
+		if deleteResponse == nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte(errorMessage))
+			return
+		}
+
+		toJ := &presenter.DeleteProjectResponse{
+			ID:        deleteResponse.ID,
+			DeletedAt: deleteResponse.DeletedAt,
+		}
+		if err := json.NewEncoder(w).Encode(toJ); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errorMessage))
+		}
+	})
+}
+
 //MakeProjectHandlers make url handlers
 func MakeProjectHandlers(r *mux.Router, n negroni.Negroni, service project.UseCase) {
 
@@ -200,4 +236,7 @@ func MakeProjectHandlers(r *mux.Router, n negroni.Negroni, service project.UseCa
 		negroni.Wrap(getAllProjects(service)),
 	)).Methods("GET", "OPTIONS").Name("getAllProjects")
 
+	r.Handle("/v1/project/{id}", n.With(
+		negroni.Wrap(deleteProject(service)),
+	)).Methods("DELETE", "OPTIONS").Name("deleteProject")
 }

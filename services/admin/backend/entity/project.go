@@ -35,6 +35,15 @@ type Project struct {
 	UpdatedAt   time.Time
 }
 
+// TODO:
+// figure out if this should be a part of the Project entity instead meaning that projects would
+// never actually be removed from the db, just marked as deleted
+//DeletedProject
+type DeletedProject struct {
+	ID        ID
+	DeletedAt time.Time
+}
+
 func NewProject(shortCode string, createdBy ID, shortName string, longName string, description string) (*Project, error) {
 	proj := &Project{
 		ID:          NewID(),
@@ -78,6 +87,15 @@ func (proj *Project) UpdateProject(updateProjectInfo Project) (*Project, error) 
 	proj.UpdatedAt = time.Now()
 
 	return proj, nil
+}
+
+func DeleteProject(id ID) (*DeletedProject, error) {
+	deleteProj := &DeletedProject{
+		ID:        id,
+		DeletedAt: time.Now(),
+	}
+
+	return deleteProj, nil
 }
 
 func (proj *Project) Validate() error {

@@ -64,3 +64,12 @@ func (r *inmemdb) GetAll() ([]*entity.Project, error) {
 
 	return ap, nil
 }
+
+//Delete a project
+func (r *inmemdb) Delete(projectToDelete *entity.DeletedProject) (*entity.DeletedProject, error) {
+	if r.m[projectToDelete.ID] == nil {
+		return nil, entity.ErrNotFound
+	}
+	delete(r.m, projectToDelete.ID)
+	return projectToDelete, nil
+}

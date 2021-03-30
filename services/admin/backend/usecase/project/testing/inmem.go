@@ -16,7 +16,9 @@
 
 package testing_test
 
-import "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
+import (
+	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity"
+)
 
 //inmem in memory repo
 type inmem struct {
@@ -60,4 +62,14 @@ func (r *inmem) GetAll() ([]*entity.Project, error) {
 	}
 
 	return ap, nil
+}
+
+//Delete a project
+// dp is the project to be deleted
+func (r *inmem) Delete(dp *entity.DeletedProject) (*entity.DeletedProject, error) {
+	if r.m[dp.ID] == nil {
+		return nil, entity.ErrNotFound
+	}
+	delete(r.m, dp.ID)
+	return dp, nil
 }

@@ -67,3 +67,11 @@ func (s *Service) GetProject(id entity.ID) (*entity.Project, error) {
 func (s *Service) GetAllProjects() ([]*entity.Project, error) {
 	return s.repo.GetAll()
 }
+
+func (s *Service) DeleteProject(id entity.ID) (*entity.DeletedProject, error) {
+	dp, err := entity.DeleteProject(id)
+	if err != nil {
+		return dp, err
+	}
+	return s.repo.Delete(dp)
+}

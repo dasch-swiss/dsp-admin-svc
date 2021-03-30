@@ -38,3 +38,9 @@ type Project struct {
 type Projects struct {
 	Projects []Project `json:"project"`
 }
+
+//Delete Response
+type DeleteProjectResponse struct {
+	ID        entity.ID `json:"id"`
+	DeletedAt time.Time `json:"deletedAt"`
+}

@@ -78,3 +78,11 @@ func TestUpdateProjectSingleProperty(t *testing.T) {
 	assert.False(t, updatedProj.CreatedAt.IsZero())
 	assert.False(t, updatedProj.UpdatedAt.IsZero())
 }
+
+func TestDeleteProject(t *testing.T) {
+	mockProjID := uuid.New()
+	deletedProj, err := entity.DeleteProject(mockProjID)
+	assert.Nil(t, err)
+	assert.Equal(t, deletedProj.ID, mockProjID)
+	assert.NotNil(t, deletedProj.DeletedAt)
+}

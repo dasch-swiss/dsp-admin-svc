@@ -30,6 +30,7 @@ type Reader interface {
 type Writer interface {
 	Create(e *entity.Project) (entity.ID, error)
 	Update(id entity.ID, e *entity.Project) (*entity.Project, error)
+	Delete(dp *entity.DeletedProject) (*entity.DeletedProject, error)
 }
 
 //Repository interface
@@ -44,4 +45,5 @@ type UseCase interface {
 	GetAllProjects() ([]*entity.Project, error)
 	CreateProject(shortCode string, createdBy entity.ID, shortName string, longName string, description string) (entity.ID, error)
 	UpdateProject(id entity.ID, data *entity.Project) (*entity.Project, error)
+	DeleteProject(id entity.ID) (*entity.DeletedProject, error)
 }

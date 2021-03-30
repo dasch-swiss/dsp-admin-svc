@@ -108,3 +108,16 @@ func Test_GetAll(t *testing.T) {
 	assert.Equal(t, ap[0].ShortCode, "aabb")
 	assert.Equal(t, ap[1].ShortCode, "ccdd")
 }
+
+func Test_Delete(t *testing.T) {
+	repo := projTesting.NewInmem()      // storage
+	service := project.NewService(repo) // service implementation
+
+	uuid, err := service.CreateProject("aabb", entity.NewID(), "short name", "long project name", "this is a test project")
+	assert.Nil(t, err)
+
+	deleteRes, err2 := service.DeleteProject(uuid)
+	assert.Nil(t, err2)
+	assert.Equal(t, deleteRes.ID, uuid)
+	assert.NotNil(t, deleteRes.DeletedAt)
+}
