@@ -1,9 +1,8 @@
 <script>
-
   import { onMount } from "svelte";
-  import ProjectInfo from "./ProjectInfo.svelte";
 
-  export let projectsList = [];
+  let projectsList = [];
+  let currentProject;
 
   onMount(async () => {
     await fetch('http://localhost:8080/v1/projects')
@@ -12,6 +11,10 @@
         projectsList = data;
       })
   })
+
+  function handleProjectClick(id) {
+    currentProject = projectsList.projects.filter(p => p.id.indexOf(id) !== -1)[0];
+  }
 </script>
 
 <main>
@@ -20,12 +23,23 @@
   {#if projectsList.projects}
     {#each projectsList.projects as project}
     <ul>
-      <li>
+      <li on:click="{() => handleProjectClick(project.id)}">
         {project.shortName}
       </li>
     </ul>
     {/each}
   {:else}
   <p>loading...</p>
+  {/if}
+
+  {#if currentProject}
+  <div>
+    <div>ID: {currentProject.id}</div>
+    <div>Title: {currentProject.shortName}</div>
+    <div>Description:</div>
+    <p>{currentProject.description}</p>
+  </div>
+  {:else}
+  <p>Select a project</p>
   {/if}
 </main>
