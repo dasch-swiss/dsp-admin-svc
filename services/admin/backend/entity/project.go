@@ -66,7 +66,7 @@ func NewProject(shortCode string, createdBy ID, shortName string, longName strin
 
 func (proj *Project) UpdateProject(updateProjectInfo Project) (*Project, error) {
 
-	// only update these properties if the a non-empty string was provided
+	// only update these properties if a non-empty string was provided
 	if strings.TrimSpace(updateProjectInfo.ShortCode) != "" {
 		proj.ShortCode = updateProjectInfo.ShortCode
 	}

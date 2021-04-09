@@ -68,9 +68,12 @@ func updateProject(service project.UseCase) http.Handler {
 			return
 		}
 
-		// get project info from the body
+		// get updated project info from the body
 		var input struct {
-			UpdateProjectInfo entity.Project `json:"project"`
+			UpdateProjectShortCode   string `json:"shortCode"`
+			UpdateProjectShortName   string `json:"shortName"`
+			UpdateProjectLongName    string `json:"longName"`
+			UpdateProjectDescription string `json:"description"`
 		}
 		inputErr := json.NewDecoder(r.Body).Decode(&input)
 		if inputErr != nil {
@@ -80,7 +83,14 @@ func updateProject(service project.UseCase) http.Handler {
 			return
 		}
 
-		updatedProject, inputErr := service.UpdateProject(id, &input.UpdateProjectInfo)
+		updateProjectInfo := entity.Project{
+			ShortCode:   input.UpdateProjectShortCode,
+			ShortName:   input.UpdateProjectShortName,
+			LongName:    input.UpdateProjectLongName,
+			Description: input.UpdateProjectDescription,
+		}
+
+		updatedProject, inputErr := service.UpdateProject(id, &updateProjectInfo)
 		if inputErr != nil {
 			log.Println(inputErr.Error())
 			w.WriteHeader(http.StatusInternalServerError)
