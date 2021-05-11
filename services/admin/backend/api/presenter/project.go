@@ -28,6 +28,36 @@ type Project struct {
 	ShortName   string                 `json:"shortName"`
 	LongName    string                 `json:"longName"`
 	Description string                 `json:"description"`
+	CreatedAt   string                 `json:"createdAt"`
+	CreatedBy   string                 `json:"createdBy"`
+	ChangedAt   string                 `json:"changedAt"`
+	ChangedBy   string                 `json:"changedBy"`
+	DeletedAt   string                 `json:"deletedAt"`
+	DeletedBy   string                 `json:"deletedBy"`
+}
+
+//UpdatedProjectShortCode
+type UpdatedProjectShortCode struct {
+	ID        valueobject.Identifier `json:"id"`
+	ShortCode string                 `json:"shortCode"`
+}
+
+//UpdatedProjectShortName
+type UpdatedProjectShortName struct {
+	ID        valueobject.Identifier `json:"id"`
+	ShortName string                 `json:"shortName"`
+}
+
+//UpdatedProjectLongName
+type UpdatedProjectLongName struct {
+	ID       valueobject.Identifier `json:"id"`
+	LongName string                 `json:"longName"`
+}
+
+//UpdatedProjectDescription
+type UpdatedProjectDescription struct {
+	ID          valueobject.Identifier `json:"id"`
+	Description string                 `json:"description"`
 }
 
 //DeleteProject data
