@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { location } from "svelte-spa-router";
   import Category from "./projects-repository/Category.svelte";
   import { getProjectsMetadata } from "./stores";
 
@@ -47,7 +46,7 @@
       <img class="logo s-inline-block" src="assets/logo/DaSCH-Logo-black.svg" alt="DaSCH logo" />
       <img class="icon-logo s-hidden" src="assets/icon/DaSCH-Icon-black-64.svg" alt="DaSCH logo" />
     </a>
-    <h1 class="title">{$location === '/projects' ? 'Repository Explorer' : `Project ${$location.split('/')[2]}`}</h1>
+    <h1 class="title">DaSCH Metadata Browser</h1>
     <div class="header-right">
       <input on:change={search} bind:value={enteredString} class="searchbar-in-header xs-inline-block" type="text" name="searchbar" placeholder="search..." />
       <!-- searchbar button -->
@@ -78,9 +77,11 @@
     <Category />
   </div>
   <div class="menu" class:hidden={!showMenu}>
-    <a class="menu-item" href="{`https://${getEnv()}dasch.swiss/`}">{`${getEnv()}dasch.swiss`}</a>
+    <a class="menu-item" href="https://dasch.swiss/">dasch.swiss</a>
     <a class="menu-item" href="{`https://app.${getEnv()}dasch.swiss/`}">{`app.${getEnv()}dasch.swiss`}</a>
     <a class="menu-item" href="{`https://admin.${getEnv()}dasch.swiss/`}">{`admin.${getEnv()}dasch.swiss`}</a>
+    <a class="menu-item" href="https://docs.dasch.swiss/">docs.dasch.swiss</a>
+    <a class="menu-item" href="https://docs-api.dasch.swiss/">docs-api.dasch.swiss</a>
   </div>
 </header>
 
@@ -121,7 +122,7 @@
     color: var(--dasch-text);
     padding: 0;
     white-space: nowrap;
-    font-size: 1.25rem;
+    font-size: 0.85rem;
     flex: 1;
   }
   .searchbar-in-header {
@@ -160,14 +161,19 @@
   .menu {
     background-color: var(--cl-background-light);
   }
-  .menu-item {
+  a.menu-item {
     display: block;
     padding: 1rem 1.5rem;
     width: calc(100% - 3rem);
+    font-family: robotobold;
+    color: var(--dasch-text);
+    text-decoration: none;
   }
-  .menu-item:hover {
+  a.menu-item:hover {
     background-color: var(--cl-transparent-light);
   }
+  /* resetting links animation for header */
+  a::before, a::after { background: none;}
   @media screen and (min-width: 768px) {
     .menu {
       width: 20rem;
@@ -176,5 +182,6 @@
       right: 0px;
       z-index: 0;
     }
+    .title {font-size: 1.25rem;}
   }
 </style>

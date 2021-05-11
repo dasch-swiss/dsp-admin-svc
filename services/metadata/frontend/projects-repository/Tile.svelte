@@ -1,7 +1,7 @@
 <script lang="ts">
   import { push } from 'svelte-spa-router';
   import type { ProjectMetadata } from '../interfaces';
-  
+
   export let projectMetadata: ProjectMetadata;
 
   const getProject = (project: ProjectMetadata): any => {

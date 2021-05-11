@@ -10,7 +10,11 @@
 <ul>
 {#each tabs as tab}
   <li class={activeTabValue === tab.value ? 'active' : ''}>
-    <span on:click={handleClick(tab.value)}>{tab.label}</span>
+    {#if tabs.length > 1 && activeTabValue !== tab.value}
+      <span on:click={handleClick(tab.value)} title={tab.label}>{`${tab.label.substring(0,5)}...`}</span>
+    {:else}
+      <span on:click={handleClick(tab.value)}>{tab.label}</span>
+    {/if}
   </li>
 {/each}
 </ul>

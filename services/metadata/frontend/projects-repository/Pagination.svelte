@@ -46,13 +46,13 @@
 
 <style>
   .pagination-container {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    display: grid;
+    text-align: center;
+    grid-template-columns: repeat(1, 1fr);
   }
   .pagination {
     display: inline-block;
-    margin: 0 20px;
+    margin: 0 auto;
   }
   button {
     color: black;
@@ -77,5 +77,17 @@
   button:last-child {
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
+  }
+  @media screen and (min-width: 768px) {
+    .pagination-container {
+      /* display: flex;
+      justify-content: center;
+      align-items: flex-start; */
+      text-align: right;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .pagination {
+      margin: 0 20px;
+    }
   }
 </style>

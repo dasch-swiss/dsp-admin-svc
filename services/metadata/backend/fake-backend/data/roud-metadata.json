@@ -380,12 +380,12 @@
       "discipline": [
         "10502 Romance languages and literature",
         {
-          "name": "SKOS UNESCO Nomenclature",
+          "name": "History of Literature",
           "type": "https://schema.org/URL",
           "url": "http://skos.um.es/unesco6/550613"
         },
         {
-          "name": "SKOS UNESCO Nomenclature",
+          "name": "Language and literature",
           "type": "https://schema.org/URL",
           "url": "http://skos.um.es/unesco6/570107"
         }

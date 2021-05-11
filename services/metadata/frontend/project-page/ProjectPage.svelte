@@ -1,19 +1,20 @@
 <script lang='ts'>
   import { tick } from 'svelte';
   import { pop } from "svelte-spa-router";
-  import { currentProjectMetadata } from '../stores';
+  import { currentProjectMetadata, previousRoute } from '../stores';
   import ProjectWidget from './ProjectWidget.svelte';
   import DownloadWidget from './DownloadWidget.svelte';
   import Tab from './Tab.svelte';
+  import { fade } from 'svelte/transition';
 
   export let params = {} as any;
 
   let project: any;
   let datasets: any[] = [];
   let tabs = [] as any[];
-  let isExpanded: boolean;
   let isDescriptionExpanded: boolean;
   let descriptionLinesNumber: number;
+  let arePublicationsExpanded: boolean;
 
   const getProjectMetadata = async () => {
     const protocol = window.location.protocol;
@@ -46,8 +47,14 @@
     }
   };
 
-  const toggleExpand = () => {
-    isExpanded = !isExpanded;
+  const toggleDescriptionExpand = () => {
+    isDescriptionExpanded = !isDescriptionExpanded;
+    !isDescriptionExpanded ? window.scrollTo(0,0) : null;
+  };
+
+  const togglePublicationExpand = () => {
+    arePublicationsExpanded = !arePublicationsExpanded;
+    !arePublicationsExpanded ? window.scrollTo(0,300) : null;
   };
 
   const getDivHeight = () => {
@@ -59,9 +66,9 @@
   };
 </script>
 
-<div class="container">
-  <div class="row">
-    <h1 class="title top-heading" style="margin-top: 40px">
+<div class="container" in:fade="{{duration: 200}}">
+  <div class="row" style="flex-wrap: wrap;">
+    <h1 class="title top-heading">
       {project?.name}
     </h1>
     {#if project?.alternateName}
@@ -77,11 +84,11 @@
     <div class="column-left">
       <div class="property-row">
         <span class="label new-subtitle">Description</span>
-        <div id=description class="data new-text {isExpanded ? '' : 'description-short'}">{project?.description}</div>
+        <div id=description class="data new-text {isDescriptionExpanded ? '' : 'description-short'}">{project?.description}</div>
       </div>
       <!-- TODO: if accepted and reused consder move it to separate component -->
       {#if descriptionLinesNumber > 6}
-        <div on:click={toggleExpand} class=expand-button>show {isExpanded ? "less" : "more"}</div>
+        <div on:click={toggleDescriptionExpand} class=expand-button>show {isDescriptionExpanded ? "less" : "more"}</div>
       {/if}
 
       {#if project?.publication && Array.isArray(project?.publication)}
@@ -89,7 +96,7 @@
           <span class="label new-subtitle">Publications</span>
             {#each project?.publication as p, i}
               {#if i > 1}
-                <span class="{isExpanded ? "data new-text" : "hidden"}">{p}</span>
+                <span class="{arePublicationsExpanded ? "data new-text" : "hidden"}">{p}</span>
               {:else}
                 <span class="data new-text">{p}</span>
               {/if}
@@ -97,7 +104,7 @@
         </div>
 
         {#if project?.publication.length > 2}
-          <div on:click={toggleExpand} class=expand-button>show {isExpanded ? "less" : "more"}</div>
+          <div on:click={togglePublicationExpand} class=expand-button>show {arePublicationsExpanded ? "less" : "more"}</div>
         {/if}
 
       {/if}
@@ -108,7 +115,7 @@
         </div>
       {/await}
 
-      <button on:click={() => {window.scrollTo(0,0)}} id=to-top-desktop class=bottom-button title="Get back to the top">
+      <button on:click={() => window.scrollTo({top: 0, left: 0, behavior: 'smooth'})} id=to-top-desktop class=bottom-button title="Get back to the top">
         <svg class=icon fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
         </svg>
@@ -116,7 +123,7 @@
 
     </div>
     <div class="column-right">
-      <button on:click={() => {pop()}} class=top-button title="go back to the projects list">
+      <button on:click={() => pop()} class=top-button title="go back to the projects list" disabled={!$previousRoute && window.history.length <= 2}>
         <svg class=icon fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
         <span class=button-label>Go Back</span>
       </button>
@@ -172,7 +179,7 @@
     display: none;
   }
   .container {
-    padding: 0 40px;
+    padding: 0 10px;
     display: block;
     max-width: 1200px;
   }
@@ -188,7 +195,7 @@
     flex-direction: column;
     flex-basis: 100%;
     flex: 2;
-    padding: 0 20px;
+    padding: 0 5px;
     height: fit-content;
   }
   .column-right {
@@ -208,7 +215,11 @@
     padding: 0 10px 10px;
     box-shadow: var(--shadow-1);
   }
+  @supports (-moz-appearance:none) {
+    button.bottom-button {margin-bottom: 40px;} 
+  }
   @media screen and (min-width: 992px) {
+    .container {padding: 0 40px}
     .column-left, .column-right {padding: 20px;}
     .column-left {min-width: 52vw;}
     .column-right {min-width: 30vw;}

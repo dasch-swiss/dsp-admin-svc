@@ -34,7 +34,7 @@ func searchProjects(query string) []Project {
 	var res []Project
 	for _, project := range projects {
 		content, _ := json.Marshal(project.Metadata)
-		match, _ := regexp.Match(query, content)
+		match, _ := regexp.Match("(?i)"+query, content)
 		if match {
 			res = append(res, project)
 		}

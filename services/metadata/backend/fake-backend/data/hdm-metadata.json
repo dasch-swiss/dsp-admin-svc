@@ -81,18 +81,18 @@
             "startDate": "2009-04-01",
             "temporalCoverage": [
                 {
-                    "name": "Periodo",
+                    "name": "Under Mediation act, 1803-1814",
                     "type": "https://schema.org/URL",
                     "url": "http://n2t.net/ark:/99152/p06c6g3pvr5"
                 },
                 "1766-1905",
                 {
-                    "name": "Periodo",
+                    "name": "Sonderbund, 1845-1847",
                     "type": "https://schema.org/URL",
                     "url": "http://n2t.net/ark:/99152/p06c6g3p4cf"
                 },
                 {
-                    "name": "Periodo",
+                    "name": "Helvetic Republic, 1798-1803",
                     "type": "https://schema.org/URL",
                     "url": "http://n2t.net/ark:/99152/p06c6g364np"
                 }

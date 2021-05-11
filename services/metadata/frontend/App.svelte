@@ -3,13 +3,19 @@
   import Footer from "./Footer.svelte";
   import Router from "svelte-spa-router";
   import routes from "./routes";
+  import { previousRoute } from "./stores";
+
+  // preventing go back button to get back out of domain
+  const routeEvent = (event: Event) => {
+    previousRoute.set(window.location.href);
+  }
 </script>
 
 <Header/>
 
 <div class=wrapper>
   <div class=content-container>
-    <Router {routes} />
+    <Router {routes} on:routeEvent={routeEvent} />
   </div>
 </div>
 

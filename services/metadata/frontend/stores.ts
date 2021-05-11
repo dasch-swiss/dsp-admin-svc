@@ -5,8 +5,8 @@ import type { PaginationData } from './interfaces';
 export const pagination = writable({} as PaginationData);
 export const pagedResults = writable(undefined as any[]);
 export const currentProjectMetadata = writable(undefined);
-
 export const query = writable('');
+export const previousRoute = writable('');
 
 export async function getProjectsMetadata(page: number, q?: string): Promise<void> {
   // const baseUrl = process.env.BASE_URL;

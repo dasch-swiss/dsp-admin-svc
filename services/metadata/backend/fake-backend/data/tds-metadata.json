@@ -459,7 +459,7 @@
         },
         {
           "place": {
-            "name": "Geonames",
+            "name": "France",
             "url": "https://www.geonames.org/3017382/republic-of-france.html"
           }
         }
@@ -468,12 +468,12 @@
       "temporalCoverage": [
         "18th century",
         {
-          "name": "Periodo",
+          "name": "Siècle des Lumières",
           "type": "https://schema.org/URL",
           "url": "http://n2t.net/ark:/99152/p0qhb66tf8f"
         },
         {
-          "name": "Periodo",
+          "name": "Second Empire, 1852-1870",
           "type": "https://schema.org/URL",
           "url": "http://n2t.net/ark:/99152/p06c6g38g49"
         },

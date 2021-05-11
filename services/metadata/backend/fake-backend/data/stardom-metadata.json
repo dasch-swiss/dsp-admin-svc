@@ -282,7 +282,7 @@
       "description": "This project aims to study the mechanisms of the construction of genre representations in the French cinematographic production of the 1940s. The aim is to establish links between the work of different contributors, the status of the stars involved, and the characters they portray on the screen. The genre study is rooted in the examination of various historical sources, particularly screenplays at various stages of writing. The production context of films such as Le Mariage de Chiffon (1942), Occupe-toi d’Amélie (1949) or Le Bon Dieu sans confession (1953) is reconstructed and examined on the basis of documents from the Claude Autant-Lara archive of the Swiss Filmrachives, and considered in the light of the tools forged by film narratology, gender studies, star studies and cultural history. The objective is to develop a “genetic” approach that will make it possible to document the stages of creation by placing them in their socio-historical context.\n\nThe main periodization (1942-1949) corresponds both to the first films officially attributed to Claude Autant-Lara as sole director, to the birth of the trio he formed with his two screenwriters Jean Aurenche and Pierre Bost, and to a pivotal moment for the French star system, which was undergoing a feminization and rejuvenation in the context of occupied France. The stars of our corpus (Odette Joyeux, Micheline Presle or Gérard Philipe) offer emblematic case studies. The initial filmic corpus has been expanded to include Le Bon Dieu sans confession (1953), Le Rouge et le Noir (1954) and Love is my Profession (En cas de malheur, 1958).\n\n",
       "discipline": [
         {
-          "name": "SKOS UNESCO Nomenclature",
+          "name": "Cinematography",
           "type": "https://schema.org/URL",
           "url": "https://skos.um.es/unesco6/620301"
         },
@@ -325,7 +325,7 @@
       "spatialCoverage": [
         {
           "place": {
-            "name": "Geonames",
+            "name": "France",
             "url": "https://www.geonames.org/3017382/republic-of-france.html"
           }
         }

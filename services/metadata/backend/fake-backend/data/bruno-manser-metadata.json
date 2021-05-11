@@ -75,12 +75,12 @@
       "description": "Bruno Manser has left a variety of media in which he documented the nomadic life of the Penan. The project aims to show and annotate the everyday life moments of a nomadic lifestyle across media as diary entries, video footage and photographs of Bruno Manser.",
       "discipline": [
         {
-          "name": "SKOS UNESCO Nomenclature",
+          "name": "Social anthropology",
           "type": "https://schema.org/URL",
           "url": "http://skos.um.es/unesco6/5103"
         },
         {
-          "name": "SKOS UNESCO Nomenclature",
+          "name": "Cultural anthropology",
           "type": "https://schema.org/URL",
           "url": "http://skos.um.es/unesco6/5101"
         }

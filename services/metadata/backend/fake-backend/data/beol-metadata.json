@@ -307,7 +307,7 @@
             "description": "The project Bernoulli-Euler Online (BEOL) integrates the two edition projects Basler Edition der Bernoulli-Briefwechsel (BEBB) and Leonhardi Euleri Opera Omnia (LEOO) into one digital platform available on the web. In addition, Jacob Bernoulli's scientific notebook Meditationes - a document of outstanding significance for the history of mathematics at its turning point around 1700 - is published for the first time in its entirety on the BEOL platform as a region-based multilayer interactive digital edition providing access to facsimiles, transcriptions, translations, indices, and commentaries. Besides being an edition platform, BEOL is a virtual research environment for the study of early modern mathematics and science as a data graph using sophisticated analysis tools. Currently BEOL is connected to two third-party repositories: The Newton Project and the Briefportal Leibniz, initiating the formation of a network of digital editions of the early modern scientific correspondence data. The goal of BEOL is thus twofold: it focuses on the mathematics influenced by the Bernoulli dynasty and Leonhard Euler and undertakes a methodological effort to present these materials to the public and researchers in a highly functional way.",
             "discipline": [
                 {
-                    "name": "SKOS UNESCO Nomenclature",
+                    "name": "Mathematics",
                     "type": "https://schema.org/URL",
                     "url": "http://skos.um.es/unesco6/12"
                 }
@@ -364,25 +364,25 @@
                 },
                 {
                     "place": {
-                        "name": "Geonames",
+                        "name": "France",
                         "url": "https://www.geonames.org/3017382/republic-of-france.html"
                     }
                 },
                 {
                     "place": {
-                        "name": "Geonames",
+                        "name": "Italy",
                         "url": "https://www.geonames.org/3175395/italian-republic.html"
                     }
                 },
                 {
                     "place": {
-                        "name": "Geonames",
+                        "name": "United Kingdom",
                         "url": "https://www.geonames.org/2635167/united-kingdom-of-great-britain-and-northern-ireland.html"
                     }
                 },
                 {
                     "place": {
-                        "name": "Geonames",
+                        "name": "Germany",
                         "url": "https://www.geonames.org/2921044/federal-republic-of-germany.html"
                     }
                 }

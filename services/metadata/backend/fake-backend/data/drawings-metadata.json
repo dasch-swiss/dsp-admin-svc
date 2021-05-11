@@ -298,12 +298,12 @@
       "discipline": [
         "10201 Sociology",
         {
-          "name": "SKOS UNESCO Nomenclature",
+          "name": "Psychology",
           "type": "https://schema.org/URL",
           "url": "http://skos.um.es/unesco6/61"
         },
         {
-          "name": "SKOS UNESCO Nomenclature",
+          "name": "Sociology of religion",
           "type": "https://schema.org/URL",
           "url": "http://skos.um.es/unesco6/630110"
         },
@@ -351,7 +351,7 @@
         },
         {
           "place": {
-            "name": "Geonames",
+            "name": "Netherlands",
             "url": "https://www.geonames.org/2750405/kingdom-of-the-netherlands.html"
           }
         },
@@ -369,19 +369,19 @@
         },
         {
           "place": {
-            "name": "Geonames",
+            "name": "Russia",
             "url": "https://www.geonames.org/2017370/russian-federation.html"
           }
         },
         {
           "place": {
-            "name": "Geonames",
+            "name": "Brazil",
             "url": "https://www.geonames.org/3469034/federative-republic-of-brazil.html"
           }
         },
         {
           "place": {
-            "name": "Geonames",
+            "name": "Argentina",
             "url": "https://www.geonames.org/3865483/argentine-republic.html"
           }
         },
@@ -393,7 +393,7 @@
         },
         {
           "place": {
-            "name": "Geonames",
+            "name": "Iran",
             "url": "https://www.geonames.org/130758/islamic-republic-of-iran.html"
           }
         },

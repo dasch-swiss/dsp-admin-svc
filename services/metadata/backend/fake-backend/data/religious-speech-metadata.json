@@ -370,7 +370,11 @@
       ],
       "description": "Notre recherche se propose d’enquêter sur les embarras de la parole religieuse telle qu’elle s’énonce dans l’espace public, en Suisse et de France, deux pays sécularisés, mais où les acteurs religieux se montrent actifs. À travers leur prise de parole médiatique, ces acteurs parviennent à susciter des controverses, quand ils n’en font pas l’objet. De portées variables, ces controverses portent notamment sur les régulations entre les genres, l’égalité des sexes et la reconnaissance de la pluralité des sexualités. Cette recrudescence du rôle public des religions dans les sociétés contemporaines a alimenté, en philosophie et en sciences sociales, des perspectives post-séculières, critiques du lien entre modernité et sécularisation, et qui invitent à mieux considérer la place des religions dans les espaces publics des sociétés libérales.Chrétienne, musulmane ou autre, la parole religieuse serait affectée d’une variété d’embarras; elle n’irait plus de soi, spécialement lorsqu’elle acquiert visibilité et prétend énoncer une vérité valant pour tous. Au regard de cette situation, certains acteurs religieux s’efforcent de séculariser l’expression de leurs convictions lorsqu’ils prennent part à une controverse - comme dans l’opposition catholique au mariage homosexuel et aux questions de genre - ou s’appuient sur une rhétorique des droits pour répondre des critiques suscitées par leur pratique - comme dans les «affaires du voile». Si les médias ont largement relayé ces controverses, d’autres affaires, scandales ou problèmes publics relatifs au genre ont fourni matière au délicat engagement public d’acteurs religieux inégalement capables de s’exprimer dans des médias séculiers et globalement en butte à la perte d’autorité de la parole religieuse hors de ses lieux propres.Afin d’appréhender cet embarras en France et en Suisse, notre recherche articule des volets quantitatif et qualitatif, à partir de deux émissions radiophoniques quotidiennes de grande écoute qui empruntent le format du «débat» de société. La radio est un lieu d’observation pertinent, en raison de son importance dans l’économie de la production médiatique. Le volet quantitatif vise à cartographier un corpus de plus de 7000 émissions, sur 10 ans (2006-2016). Le volet qualitatif poursuit l’identification fine des acteurs religieux. Dans un second temps, nous sélectionnerons cinq controverses sur lesquelles nous mènerons une enquête approfondie, historiographique et ethnographique, afin de retracer les tenants et aboutissants de chaque controverse, nationale et transnationale. Cette recherche permettra d’interroger empiriquement la façon dont les mobilisations religieuses sur des questions de genre et de sexualités redéfinissent les règles d’interlocution des espaces publics sécularisés et transforment la parole des acteurs religieux.",
       "discipline": [
-        "https://skos.um.es/unesco6/63/",
+        {
+          "name": "Sociology",
+          "type": "https://schema.org/URL",
+          "url": "https://skos.um.es/unesco6/63/"
+        },  
         "10201 Sociology"
       ],
       "endDate": "2019-07-31",
@@ -420,7 +424,7 @@
         },
         {
           "place": {
-            "name": "Geonames",
+            "name": "France",
             "url": "https://www.geonames.org/3017382/republic-of-france.html"
           }
         }

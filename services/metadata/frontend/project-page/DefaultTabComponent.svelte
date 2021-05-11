@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "svelte";
+  import { fade } from "svelte/transition";
   import { currentProjectMetadata } from "../stores";
 
   export let dataset;
@@ -32,39 +33,48 @@
     window.getSelection().removeAllRanges();
   };
 
+  const truncateString = (s) => {
+    const browserWidth = window.innerWidth;
+    if (browserWidth < 992 && s.length > ((browserWidth - 100) / 8)) {
+      return `${s.substring(0, (browserWidth - 100) / 8)}...`;
+    } else if (browserWidth >= 992 && s.length > (browserWidth / 17)) {
+      return `${s.substring(0, (browserWidth / 17))}...`;
+    } else return s;
+  };
+
   console.log(2, dataset)
 </script>
 
-<div class=properties>
+<div id=dataset in:fade="{{duration: 200}}">
   {#if dataset}
     {#if dataset?.content.alternativeTitle}
-    <div class="property-row">
+    <div>
       <span class=label>Alternative Title</span>
       <span class=data>{dataset?.content.alternativeTitle}</span>
     </div>
     {/if}
   <div class="grid-wrapper">
-    <div class="property-row">
+    <div>
       <span class=label>Access</span>
       <span class=data>{dataset?.content.conditionsOfAccess}</span>
     </div>
-    <div class="property-row">
+    <div>
       <span class=label>Status</span>
       <span class=data>{dataset?.content.status}</span>
     </div>
     {#if dataset.content.dateCreated}
-    <div class="property-row">
+    <div>
       <span class=label>Date Created</span>
       <span class=data>{dataset?.content.dateCreated}</span>
     </div>
     {/if}
     {#if dataset.content.dateModified}
-    <div class="property-row">
+    <div>
       <span class=label>Date Modified</span>
       <span class=data>{dataset?.content.dateModified}</span>
     </div>
     {/if}
-    <div class="property-row">
+    <div>
       <span class=label>License</span>
       {#if Array.isArray(dataset?.content.license)}
         {#each dataset?.content.license as l}
@@ -72,19 +82,19 @@
         {/each}
       {/if}
     </div>
-    <div class="property-row">
+    <div>
       <span class=label>Type of Data</span>
       <span class=data>{dataset?.content.typeOfData.join(', ')}</span>
     </div>
     {#if dataset?.content.documentation}
-    <div class="property-row">
+    <div style="grid-column-start: 1;grid-column-end: 3;">
       <span class=label>Additional documentation</span>
       {#if Array.isArray(dataset?.content.documentation)}
         {#each dataset?.content.documentation as d}
           {#if d.url}
-          <a class=data href={d.url} target=_>{d.name}</a>
+          <a class=data href={d.url} target=_>{truncateString(d.name)}</a>
           {:else if d.match("http")}
-          <a class=data href={d} target=_>{d}</a>
+          <a class=data href={d} target=_>{truncateString(d)}</a>
           {:else}
           <span class=data>{d}</span>
           {/if}
@@ -94,7 +104,7 @@
     {/if}
   </div>
   <div class="grid-wrapper" style="grid-template-columns: repeat(1, 1fr)">
-    <div class="property-row">
+    <div>
       <span class=label>Languages</span>
       <span class=data>{dataset?.content.language.join(', ')}</span>
     </div>
@@ -110,13 +120,13 @@
     <span id=how-to-cite class=data>{dataset?.content.howToCite}</span>
   </div>
 
-  <div class="property-row">
+  <div>
     <span class=label>Abstract</span>
     {#if Array.isArray(dataset?.content.abstract)}
     <div id=abstract class="data {isAbstractExpanded ? '' : 'abstract-short'}">
       {#each dataset?.content.abstract as a}
         {#if a.url}
-        <div><a class=data href={a.url} target=_>{a.name}</a></div>
+        <div><a class=data href={a.url} target=_>{truncateString(a.name)}</a></div>
         {:else}
         <div>{a}</div>
         {/if}
@@ -133,27 +143,29 @@
   <div class="grid-wrapper">
     {#if Array.isArray(dataset?.content.qualifiedAttribution)}
       {#each dataset?.content.qualifiedAttribution as a}
-      <div class="attributions data">
-        <div class=role>{a.role}</div>
-        {#if findObjectById(a.agent[0].id).type === "http://ns.dasch.swiss/repository#Person"}
-        <div>{findObjectById(a.agent[0].id)?.givenName.split(";").join(" ")} {findObjectById(a.agent[0].id)?.familyName.split(";").join(" ")}</div>
-        {#if findObjectById(a.agent[0].id)?.sameAs}
-        <a href={findObjectById(a.agent[0].id)?.sameAs[0].url} target=_>{findObjectById(a.agent[0].id)?.sameAs[0].name}</a>
-        {/if}
-        {#if findObjectById(a.agent[0].id)?.email}
-        <div>{findObjectById(a.agent[0].id)?.email[0]}</div>
-        {/if}
-        {#if Array.isArray(findObjectById(a.agent[0].id)?.memberOf)}
-          {#each findObjectById(a.agent[0].id)?.memberOf as o}
-          <div>{findObjectById(o.id).name}</div>
-          {/each}
-        {/if}
-        <div>{findObjectById(a.agent[0].id)?.jobTitle[0]}</div>
-        {:else}
-        <div>{findObjectById(a.agent[0].id)?.name}</div>
-        {/if}
-        <br />
-      </div>
+        <div class="attributions data">
+          <div class=role>{a.role}</div>
+          {#if findObjectById(a.agent[0].id).type === "http://ns.dasch.swiss/repository#Person"}
+            {#if findObjectById(a.agent[0].id)?.sameAs}
+              <a href={findObjectById(a.agent[0].id)?.sameAs[0].url} target=_>{findObjectById(a.agent[0].id)?.givenName.split(";").join(" ")} {findObjectById(a.agent[0].id)?.familyName.split(";").join(" ")}</a>
+            {:else}
+              <div>{findObjectById(a.agent[0].id)?.givenName.split(";").join(" ")} {findObjectById(a.agent[0].id)?.familyName.split(";").join(" ")}</div>
+            {/if}
+            {#if Array.isArray(findObjectById(a.agent[0].id)?.memberOf)}
+              {#each findObjectById(a.agent[0].id)?.memberOf as o}
+                <div>{findObjectById(o.id).name}</div>
+              {/each}
+            {/if}
+            <div>{findObjectById(a.agent[0].id)?.jobTitle[0]}</div>
+          {:else}
+            <div>{findObjectById(a.agent[0].id)?.name}</div>
+          {/if}
+          {#if findObjectById(a.agent[0].id)?.email && Array.isArray(findObjectById(a.agent[0].id)?.email)}
+            <a class=email href="mailto:{findObjectById(a.agent[0].id)?.email[0]}">{findObjectById(a.agent[0].id)?.email[0]}</a>
+          {:else}
+            <a class=email href="mailto:{findObjectById(a.agent[0].id)?.email}">{findObjectById(a.agent[0].id)?.email}</a>
+          {/if}
+        </div>
       {/each}
     {/if}
   </div>
@@ -162,6 +174,7 @@
 </div>
 
 <style>
+  a {color: var(--lead-colour);}
   button {
     border: none;
     background-color: inherit;
@@ -184,7 +197,8 @@
     overflow: hidden;
   }
   .attributions {
-    padding: 0 10px 0 0;
+    padding: 10px 10px 0 0;
+    line-height: 1.5;
   }
   .grid-wrapper {
     display: grid;

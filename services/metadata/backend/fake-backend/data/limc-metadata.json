@@ -98,7 +98,14 @@
                 }
             ],
             "name": "Gesuch im Bereich Kultur",
-            "number": "19-109"
+            "number": "19-109",
+            "url": [
+                {
+                    "name": "19-109",
+                    "type": "https://schema.org/URL",
+                    "url": "https://www.binding-stiftung.ch/"
+                }
+            ]
         },
         {
             "type": "http://ns.dasch.swiss/repository#Project",
@@ -109,7 +116,7 @@
             "description": "Digital LIMC is a digital platform for Classical Mythology, it contains what we know about the iconography of Greek, Etruscan and Roman mythology, both in ancient Greek, Etruscan and Roman art as well as in the one of neighbouring Mediterranean cultures. These literary and iconographical sources of ancient mythology are key elements of the cultural heritage of mankind. The Foundation for the LIMC prepared and published 10 volumes of the Lexicon Iconographicum Mythologiae Classicae (LIMC) between 1981 and 2009. This publication project was followed by the Thesaurus Cultus et Rituum Antiquorum (ThesCRA; 10 volumes), focussing on ritual and cult in antiquity.\n\nDigital LIMC makes all data accessible which were assembled in the course of the preparation of the printed books and which are stored in the basement of a building of the University of Basel today. \n\n",
             "discipline": [
                 {
-                    "name": "SKOS UNESCO Nomenclature",
+                    "name": "Archaeology",
                     "type": "https://schema.org/URL",
                     "url": "http://skos.um.es/unesco6/550501"
                 }
@@ -182,27 +189,27 @@
             "startDate": "2014-06-02",
             "temporalCoverage": [
                 {
-                    "name": "ChronOntology",
+                    "name": "Ancient Greek (culture or style)",
                     "type": "https://schema.org/URL",
                     "url": "http://chronontology.dainst.org/period/YOyP9TLDuhrb"
                 },
                 {
-                    "name": "ChronOntology",
+                    "name": "Etruscan (culture or style)",
                     "type": "https://schema.org/URL",
                     "url": "http://chronontology.dainst.org/period/RGbECa9kHJT4"
                 },
                 {
-                    "name": "ChronOntology",
+                    "name": "Egyptian (ancient)",
                     "type": "https://schema.org/URL",
                     "url": "http://chronontology.dainst.org/period/6VooUMYGJjOI"
                 },
                 {
-                    "name": "ChronOntology",
+                    "name": "Roman (ancient Italian culture or period)",
                     "type": "https://schema.org/URL",
                     "url": "http://chronontology.dainst.org/period/yY1zReDz86zF"
                 },
                 {
-                    "name": "ChronOntology",
+                    "name": "Near Eastern (Early Western World)",
                     "type": "https://schema.org/URL",
                     "url": "http://chronontology.dainst.org/period/3mQhHXhO86oj"
                 }
@@ -293,7 +300,14 @@
                     "id": "http://ns.dasch.swiss/repository#dsp-080E-organization-003"
                 }
             ],
-            "number": "14/17-18"
+            "number": "14/17-18",
+            "url": [
+                {
+                    "name": "14/17-18",
+                    "type": "https://schema.org/URL",
+                    "url": "https://ceramica-ch.ch/"
+                }
+            ]
         },
         {
             "type": "http://ns.dasch.swiss/repository#Grant",
@@ -342,7 +356,14 @@
                 }
             ],
             "name": "Gesuch im Bereich Bildung und Wissenschaft",
-            "number": "2015-2371/1.2"
+            "number": "2015-2371/1.2",
+            "url": [
+                {
+                    "name": "2015-2371/1.2",
+                    "type": "https://schema.org/URL",
+                    "url": "http://www.ernst-goehner-stiftung.ch/index.php/de"
+                }
+            ]
         }
     ]
 }

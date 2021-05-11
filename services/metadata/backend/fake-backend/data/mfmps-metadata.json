@@ -262,7 +262,7 @@
       "discipline": [
         "10404 Visual arts and Art history",
         {
-          "name": "SKOS UNESCO Nomenclature",
+          "name": "History of art",
           "type": "https://schema.org/URL",
           "url": "https://skos.um.es/unesco6/550602/"
         }
@@ -295,13 +295,13 @@
       "spatialCoverage": [
         {
           "place": {
-            "name": "Geonames",
+            "name": "France",
             "url": "https://www.geonames.org/3017382/republic-of-france.html"
           }
         },
         {
           "place": {
-            "name": "Geonames",
+            "name": "Spain",
             "url": "https://www.geonames.org/2510769/kingdom-of-spain.html"
           }
         },
@@ -314,8 +314,16 @@
       ],
       "startDate": "2018-12-01",
       "temporalCoverage": [
-        "http://chronontology.dainst.org/period/ROL7rN1qOgMe",
-        "http://n2t.net/ark:/99152/p0qhb66xnj2"
+        {
+          "name": "Gothic (Medieval)",
+          "type": "https://schema.org/URL",
+          "url": "http://chronontology.dainst.org/period/ROL7rN1qOgMe"
+        },
+        {
+          "name": "Moyen Âge classique",
+          "type": "https://schema.org/URL",
+          "url": "http://n2t.net/ark:/99152/p0qhb66xnj2"
+        }
       ],
       "url": [
         {

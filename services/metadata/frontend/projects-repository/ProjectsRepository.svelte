@@ -4,8 +4,10 @@
   import { onMount } from 'svelte';
   import Pagination from './Pagination.svelte';
   import { getProjectsMetadata, pagedResults } from '../stores';
+  import { fade } from 'svelte/transition';
+  import {createEventDispatcher} from 'svelte'
 
-  const defaultRoute = 'projects?_page=1&_limit=9'
+  const dispatch = createEventDispatcher();
   let message = 'Loading...';
 
   setTimeout(() => {
@@ -15,6 +17,9 @@
     }, 3000);
   
   onMount(async () => {
+    // preventing go back button to get back out of domain
+    dispatch('routeEvent');
+    
     if (!$pagedResults) {
       await getProjectsMetadata(1);
     }
@@ -26,7 +31,7 @@
     <Category />
   </div>
 </nav>
-<main>
+<main in:fade="{{duration: 200}}">
   <div class=tile-container>
     {#if $pagedResults && $pagedResults.length}
       {#each $pagedResults as project}
@@ -68,7 +73,7 @@ main {
   justify-content: center;
 }
 .tile-container {
-  padding: 40px 5px;
+  padding: 10px 5px;
   display: flex;
   flex-flow: row wrap;
   justify-content: center;

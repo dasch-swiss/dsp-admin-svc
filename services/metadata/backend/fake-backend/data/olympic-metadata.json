@@ -222,7 +222,7 @@
       "discipline": [
         "10301 General history (without pre-and early history)",
         {
-          "name": "SKOS UNESCO Nomenclature",
+          "name": "General History",
           "type": "https://schema.org/URL",
           "url": "https://skos.um.es/unesco6/5502/html"
         }
@@ -253,7 +253,8 @@
       "spatialCoverage": [
         {
           "place": {
-            "name": "getty.edu",
+            "name": "World",
+            "type": "https://schema.org/URL",
             "url": "http://vocab.getty.edu/page/tgn/7029392"
           }
         }

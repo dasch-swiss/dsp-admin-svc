@@ -15,6 +15,12 @@
     return s.substr(s.lastIndexOf('/') + 1).split('.')[0].split("-").join(' ');
     // return s.match(regex)[0].split('.')[0].split("-").join(' ');
   }
+
+  const truncateString = (s) => {
+    if (s.length > 35) {
+      return `${s.slice(0, 35)}...`;
+    } else return s;
+  };
 </script>
 
 <div class=label>DSP Internal Shortcode</div>
@@ -28,9 +34,9 @@
   {#each project?.discipline as d}
     {#if typeof d === "string"}
       {#if d.split(" ")[0].match(/^[0-9]*$/)}
-        <a href=http://www.snf.ch/SiteCollectionDocuments/allg_disziplinenliste.pdf target=_>{d}</a>
+        <a class=data href=http://www.snf.ch/SiteCollectionDocuments/allg_disziplinenliste.pdf target=_>{truncateString(d)}</a>
       {:else if d.match("http")}
-        <a href={d} target=_>{d}</a>
+        <a class=data href={d} target=_>{truncateString(d)}</a>
       {:else}
         <div class="data">{d}</div>
       {/if}
@@ -46,7 +52,7 @@
     {#if typeof t === "string"}
     <div class="data">{t}</div>
     {:else}
-    <a class=data href={t.url} target=_>{t.name}</a>
+    <a class=data href={t.url} target=_>{truncateString(t.name)}</a>
     {/if}
   {/each}
 {/if}
@@ -54,7 +60,7 @@
 <div class=label>Spatial Coverage</div>
 {#if Array.isArray(project?.spatialCoverage)}
   {#each project?.spatialCoverage as s}
-  <a class=data style="text-transform: capitalize" href={s.place.url} target=_>{handleSpatialCoverageName(s.place.url)}</a>
+  <a class=data style="text-transform: capitalize" href={s.place.url} target=_>{truncateString(handleSpatialCoverageName(s.place.url))}</a>
   {/each}
 {/if}
 
@@ -92,27 +98,27 @@
 
 {#if project?.contactPoint}
   <div class=label>Contact</div>
-  {#if project?.contactPoint[0].id.givenName && project?.contactPoint[0].id.familyName}
+  {#if findObjectById(project?.contactPoint[0].id)?.givenName && findObjectById(project?.contactPoint[0].id)?.familyName}
     <div id=contact class=data>{findObjectById(project?.contactPoint[0].id)?.givenName?.split(";").join(" ")} {findObjectById(project?.contactPoint[0].id)?.familyName}</div>
-  {/if}
-  {#if findObjectById(project?.contactPoint[0].id)?.email}
-    {#if Array.isArray(findObjectById(project?.contactPoint[0].id)?.email)}
-      <div id=email class=data>{findObjectById(project?.contactPoint[0].id)?.email[0]}</div>
-    {:else}
-      <div id=email class=data>{findObjectById(project?.contactPoint[0].id)?.email}</div>
-    {/if}
   {/if}
   {#if Array.isArray(findObjectById(project?.contactPoint[0].id)?.memberOf)}
     {#each findObjectById(project?.contactPoint[0].id)?.memberOf as o}
       <span>{findObjectById(o.id).name[0]}</span>
     {/each}
-{/if}
+  {/if}
+  {#if findObjectById(project?.contactPoint[0].id)?.email}
+    {#if Array.isArray(findObjectById(project?.contactPoint[0].id)?.email)}
+      <a class="data email" href="mailto:{findObjectById(project?.contactPoint[0].id)?.email[0]}">{findObjectById(project?.contactPoint[0].id)?.email[0]}</a>
+    {:else}
+      <a class="data email" href="mailto:{findObjectById(project?.contactPoint[0].id)?.email}">{findObjectById(project?.contactPoint[0].id)?.email}</a>
+    {/if}
+  {/if}
 {/if}
 
 <div class=label>Website</div>
 {#if Array.isArray(project?.url)}
   {#each project?.url as url}
-    <a class=data href={url.url} target=_>{url.name}</a>
+    <a class=data href={url.url} target=_>{truncateString(url.name)}</a>
   {/each}
 {/if}
 
@@ -122,7 +128,10 @@
 {/if}
 
 <style>
-  a {display: block;}
+  a {
+    display: block;
+    color: var(--lead-colour);
+  }
   .keyword {
     padding: 0;
     /* display: inline;
