@@ -59,18 +59,15 @@
     "text": {
       "type": "object",
       "title": "Text Property (multilingual)",
+      "description": "object of strings in a particular languages (e.g. `'en': 'some text'`).",
       "patternProperties": {
         "^[a-z]{2}$": {
-          "type": "array",
-          "title": "Text in a particular language",
-          "description": "arrays of strings in a particular languages (e.g. `'en': ['some text']`).",
-          "items": {
-            "type": "string"
-          }
+          "type": "string",
+          "description": "Pair of a language iso code (e.g. 'en') and a sting in the language defined by the language code."
         }
       },
-      "additionalProperties": false,
-      "minProperties": 1
+      "minProperties": 1,
+      "additionalProperties": false
     },
     "date": {
       "type": "string",
@@ -94,7 +91,9 @@
             "Chronontology",
             "GND",
             "VIAF",
-            "Grid"
+            "Grid",
+            "ORCID",
+            "Creative Commons"
           ],
           "default": "URL"
         },
@@ -162,9 +161,11 @@
           }
         },
         "keywords": {
-          "type": "object",
+          "type": "array",
           "description": "Keywords/Tags describing the project.",
-          "$ref": "#/definitions/text"
+          "items": {
+            "$ref": "#/definitions/text"
+          }
         },
         "disciplines": {
           "description": "Discipline/field of research of the project.",
@@ -256,8 +257,10 @@
         },
         "alternativeNames": {
           "description": "Alternative names of the project.",
-          "type": "object",
-          "$ref": "#/definitions/text"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/text"
+          }
         }
       },
       "required": [
@@ -473,8 +476,10 @@
               }
             },
             "texts": {
-              "type": "object",
-              "$ref": "#/definitions/text"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/text"
+              }
             }
           }
         },
@@ -503,9 +508,11 @@
           }
         },
         "languages": {
-          "type": "object",
+          "type": "array",
           "description": "Languages present in the dataset.",
-          "$ref": "#/definitions/text"
+          "items": {
+            "$ref": "#/definitions/text"
+          }
         },
         "attributions": {
           "type": "array",
@@ -516,9 +523,11 @@
           }
         },
         "alternativeTitles": {
-          "type": "object",
+          "type": "array",
           "description": "Alternative titles of the dataset.",
-          "$ref": "#/definitions/text"
+          "items": {
+            "$ref": "#/definitions/text"
+          }
         },
         "datePublished": {
           "description": "Publishing date of the dataset.",
@@ -554,8 +563,10 @@
               }
             },
             "texts": {
-              "type": "object",
-              "$ref": "#/definitions/text"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/text"
+              }
             }
           }
         }
