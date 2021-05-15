@@ -2,9 +2,12 @@ bazel-*
 dist
 node_modules
 .clwb
+.gradle
 .ijwb
-public/build
+.vscode
 .DS_Store
+/build/
 /public/build/
 /pkg/
 /dasch-service-platform.code-workspace
+

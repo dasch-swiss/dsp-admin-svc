@@ -1,7 +1,0 @@
-{
-  "editor.insertSpaces": true,
-  "editor.tabSize": 2,
-  "files.insertFinalNewline": true,
-  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
-  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false
-}
