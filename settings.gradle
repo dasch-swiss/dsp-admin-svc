@@ -1,0 +1,5 @@
+rootProject.name = 'dasch-service-platform'
+include ':services:admin:backend'
+include ':services:metadata:backend'
+include ':services:resource:backend'
+include ':shared:go:pkg'
