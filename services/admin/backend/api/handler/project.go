@@ -383,10 +383,10 @@ func listProjects(service project.UseCase) http.Handler {
 			}
 
 			toJ = append(toJ, presenter.Project{
-				ID: p.ID(),
-				ShortCode: p.ShortCode().String(),
-				ShortName: p.ShortName().String(),
-				LongName: p.LongName().String(),
+				ID:          p.ID(),
+				ShortCode:   p.ShortCode().String(),
+				ShortName:   p.ShortName().String(),
+				LongName:    p.LongName().String(),
 				Description: p.Description().String(),
 			})
 		}

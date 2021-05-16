@@ -58,5 +58,3 @@ func (h *HTTP) Finished() {
 type Service interface {
 	SaveHTTP(h *HTTP)
 }
-
-

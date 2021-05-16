@@ -24,9 +24,9 @@
 package config
 
 const (
-	DB_USER                = "root"
-	DB_PASSWORD            = "test"
-	DB_DATABASE            = "test"
-	DB_HOST                = "127.0.0.1"
-	API_PORT               = 8080
+	DB_USER     = "root"
+	DB_PASSWORD = "test"
+	DB_DATABASE = "test"
+	DB_HOST     = "127.0.0.1"
+	API_PORT    = 8080
 )

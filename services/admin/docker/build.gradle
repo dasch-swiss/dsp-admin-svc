@@ -1,0 +1,10 @@
+plugins {
+    id "com.palantir.docker" version "0.22.1"
+}
+
+version '0.1.0'
+
+docker {
+     name "${project.name}:${project.version}"
+     files 'springbootify.jar'
+}

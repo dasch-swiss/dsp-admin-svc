@@ -31,51 +31,51 @@ func main() {
 		log.Println(err)
 	}
 	fmt.Println(path)
-/*
-	organizationRepository := repository.NewInmemDB()
-	organizationService := organization.NewService(organizationRepository)
+	/*
+		organizationRepository := repository.NewInmemDB()
+		organizationService := organization.NewService(organizationRepository)
 
-	metricService, err := metric.NewPrometheusService()
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+		metricService, err := metric.NewPrometheusService()
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 
-	r := mux.NewRouter()
+		r := mux.NewRouter()
 
-	//handlers
-	n := negroni.New(
-		negroni.HandlerFunc(middleware.Cors),
-		middleware.Metrics(metricService),
-		negroni.NewLogger(),
-	)
+		//handlers
+		n := negroni.New(
+			negroni.HandlerFunc(middleware.Cors),
+			middleware.Metrics(metricService),
+			negroni.NewLogger(),
+		)
 
-	//organization
-	handler.MakeOrganizationHandlers(r, *n, organizationService)
+		//organization
+		handler.MakeOrganizationHandlers(r, *n, organizationService)
 
-	//spa
-	handler.MakeSpaHandlers(r, *n)
+		//spa
+		handler.MakeSpaHandlers(r, *n)
 
-	http.Handle("/", r)
-	http.Handle("/metrics", promhttp.Handler())
-	r.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
+		http.Handle("/", r)
+		http.Handle("/metrics", promhttp.Handler())
+		r.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		})
 
-	// start HTTP server with all the previous attached handlers
-	logger := log.New(os.Stderr, "logger: ", log.Lshortfile)
-	srv := &http.Server{
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
-		Addr:         ":" + strconv.Itoa(config.API_PORT),
-		// FIXME: get rid of deprecated github.com/gorilla/context library
-		Handler:  context.ClearHandler(http.DefaultServeMux),
-		ErrorLog: logger,
-	}
-	err = srv.ListenAndServe()
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-*/
+		// start HTTP server with all the previous attached handlers
+		logger := log.New(os.Stderr, "logger: ", log.Lshortfile)
+		srv := &http.Server{
+			ReadTimeout:  5 * time.Second,
+			WriteTimeout: 10 * time.Second,
+			Addr:         ":" + strconv.Itoa(config.API_PORT),
+			// FIXME: get rid of deprecated github.com/gorilla/context library
+			Handler:  context.ClearHandler(http.DefaultServeMux),
+			ErrorLog: logger,
+		}
+		err = srv.ListenAndServe()
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+	*/
 
 	r := mux.NewRouter()
 

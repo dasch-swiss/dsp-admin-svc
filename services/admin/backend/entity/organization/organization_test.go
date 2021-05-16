@@ -16,7 +16,6 @@
 
 package organization_test
 
-
 import (
 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity/organization"
 	"github.com/stretchr/testify/assert"

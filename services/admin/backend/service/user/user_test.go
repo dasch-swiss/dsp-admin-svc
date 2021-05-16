@@ -40,7 +40,6 @@ func TestUser_SignupUser(t *testing.T) {
 	expectedGivenName := "Donald"
 	expectedFamilyName := "Duck"
 
-
 	repo := NewInMemRepo()
 	service := user.NewService(repo)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(5)*time.Second)
@@ -50,7 +49,7 @@ func TestUser_SignupUser(t *testing.T) {
 	assert.Nil(t, err)
 
 	foundUser, err := service.GetUser(ctx, userId)
-	assert.Nil(t,err)
+	assert.Nil(t, err)
 	assert.Equal(t, expectedAggregateType, foundUser.AggregateType().String())
 	assert.Equal(t, expectedUsername, foundUser.Username().String())
 	assert.Equal(t, expectedEmail, foundUser.Email().String())

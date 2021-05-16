@@ -112,10 +112,10 @@ func (org *Organization) RemoveName(name string) error {
 }
 
 //GetNames returns all organization names.
-func (org *Organization) GetNames() []string  {
+func (org *Organization) GetNames() []string {
 	var names []string
 
-	for name, _ := range org.Name {
+	for name := range org.Name {
 		names = append(names, name)
 	}
 

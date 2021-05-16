@@ -24,6 +24,11 @@ test: yarn ## test all targets
 	@bazel run @nodejs//:yarn -- run build
 	@bazel test //...
 
+.PHONY: gradle-test
+gradle-test: yarn ## using gradle: test all targets
+	@bazel run @nodejs//:yarn -- run build
+	@./gradlew test
+
 .PHONY: buildifier
 buildifier: ## format Bazel WORKSPACE and BUILD.bazel files
 	@bazel run :buildifier

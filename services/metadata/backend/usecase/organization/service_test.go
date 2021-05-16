@@ -41,7 +41,7 @@ func newFixtureOrganization() *entity.Organization {
 }
 
 func Test_Create(t *testing.T) {
-	repo := orgTesting.NewInmem() // storage
+	repo := orgTesting.NewInmem()            // storage
 	service := organization.NewService(repo) // service implementing the usecases
 	org := newFixtureOrganization()
 	_, err := service.CreateOrganization("TEST Organization")

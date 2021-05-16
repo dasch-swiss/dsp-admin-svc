@@ -23,7 +23,6 @@
 
 package entity_test
 
-
 import (
 	"github.com/dasch-swiss/dasch-service-platform/services/resource/backend/entity"
 	"github.com/stretchr/testify/assert"

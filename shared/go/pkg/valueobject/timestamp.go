@@ -33,7 +33,7 @@ func NewTimestamp() Timestamp {
 }
 
 //NewTimestampFromUnix creates a new timestamp value object for the supplied unix time in seconds.
-func NewTimestampFromUnix(sec int64) Timestamp{
+func NewTimestampFromUnix(sec int64) Timestamp {
 	return Timestamp{value: time.Unix(sec, 0)}
 }
 

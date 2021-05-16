@@ -33,7 +33,7 @@ import (
 func TestNewOrganization(t *testing.T) {
 	org, err := entity.NewOrganization("TEST Org")
 	assert.Nil(t, err)
-	assert.Equal(t, map[string]bool{"TEST Org":true}, org.Name)
+	assert.Equal(t, map[string]bool{"TEST Org": true}, org.Name)
 	assert.NotNil(t, org.ID)
 	assert.False(t, org.CreatedAt.IsZero())
 	assert.True(t, org.UpdatedAt.IsZero())
@@ -45,7 +45,7 @@ func TestAddName(t *testing.T) {
 
 	err2 := org.AddName("additional org name")
 	assert.Nil(t, err2)
-	assert.Equal(t, map[string]bool{"new org":true, "additional org name":true}, org.Name)
+	assert.Equal(t, map[string]bool{"new org": true, "additional org name": true}, org.Name)
 }
 
 func TestNotAllowAddSameName(t *testing.T) {
