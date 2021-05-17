@@ -42,7 +42,23 @@
     } else return s;
   };
 
-  console.log(2, dataset)
+  let mergedAttributions = [];
+  const attributions = JSON.parse(JSON.stringify(dataset?.content.qualifiedAttribution));
+  for(let a of attributions) {
+    if(!mergedAttributions.length) {
+      mergedAttributions.push(a);
+    } else {
+      mergedAttributions.push(a);
+      for(let b of mergedAttributions) {
+        if(a.agent[0].id === b.agent[0].id && a.role !== b.role){
+          b.role.push(a.role[0]);
+          mergedAttributions.splice(mergedAttributions.indexOf(a) ,1);
+        }
+      }
+    }
+  }
+
+  console.log('loaded dataset', dataset)
 </script>
 
 <div id=dataset in:fade="{{duration: 200}}">
@@ -141,10 +157,10 @@
 
   <span class=label>Attributions</span>
   <div class="grid-wrapper">
-    {#if Array.isArray(dataset?.content.qualifiedAttribution)}
-      {#each dataset?.content.qualifiedAttribution as a}
+    {#if Array.isArray(mergedAttributions)}
+      {#each mergedAttributions as a}
         <div class="attributions data">
-          <div class=role>{a.role}</div>
+          <div class=role>{a.role.join(", ")}</div>
           {#if findObjectById(a.agent[0].id).type === "http://ns.dasch.swiss/repository#Person"}
             {#if findObjectById(a.agent[0].id)?.sameAs}
               <a href={findObjectById(a.agent[0].id)?.sameAs[0].url} target=_>{findObjectById(a.agent[0].id)?.givenName.split(";").join(" ")} {findObjectById(a.agent[0].id)?.familyName.split(";").join(" ")}</a>
@@ -162,8 +178,6 @@
           {/if}
           {#if findObjectById(a.agent[0].id)?.email && Array.isArray(findObjectById(a.agent[0].id)?.email)}
             <a class=email href="mailto:{findObjectById(a.agent[0].id)?.email[0]}">{findObjectById(a.agent[0].id)?.email[0]}</a>
-          {:else}
-            <a class=email href="mailto:{findObjectById(a.agent[0].id)?.email}">{findObjectById(a.agent[0].id)?.email}</a>
           {/if}
         </div>
       {/each}

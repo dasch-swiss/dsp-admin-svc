@@ -41,7 +41,7 @@
         <div class="data">{d}</div>
       {/if}
     {:else}
-    <a class=data href={d.url} target=_>{d.name}</a>
+      <a class=data href={d.url} target=_>{d.name}</a>
     {/if}
   {/each}
 {/if}
@@ -50,9 +50,9 @@
 {#if Array.isArray(project?.temporalCoverage)}
   {#each project?.temporalCoverage as t}
     {#if typeof t === "string"}
-    <div class="data">{t}</div>
+      <div class="data">{t}</div>
     {:else}
-    <a class=data href={t.url} target=_>{truncateString(t.name)}</a>
+      <a class=data href={t.url} target=_>{truncateString(t.name)}</a>
     {/if}
   {/each}
 {/if}
@@ -60,7 +60,12 @@
 <div class=label>Spatial Coverage</div>
 {#if Array.isArray(project?.spatialCoverage)}
   {#each project?.spatialCoverage as s}
-  <a class=data style="text-transform: capitalize" href={s.place.url} target=_>{truncateString(handleSpatialCoverageName(s.place.url))}</a>
+  <!-- temp solution: some of the names were fixed manually, another are paserd from URLs -->
+    {#if s.place.name !== "Geonames"}
+      <a class=data style="text-transform: capitalize" href={s.place.url} target=_>{truncateString(s.place.name)}</a>
+    {:else}
+      <a class=data style="text-transform: capitalize" href={s.place.url} target=_>{truncateString(handleSpatialCoverageName(s.place.url))}</a>
+    {/if}    
   {/each}
 {/if}
 
@@ -76,9 +81,9 @@
 {#if Array.isArray(project?.funder)}
   {#each project?.funder as f}
     {#if findObjectById(f.id).type === "http://ns.dasch.swiss/repository#Person"}
-    <div class=data>{findObjectById(f.id)?.givenName.split(";").join(" ")} {findObjectById(f.id)?.familyName}</div>
+      <div class=data>{findObjectById(f.id)?.givenName.split(";").join(" ")} {findObjectById(f.id)?.familyName}</div>
     {:else if findObjectById(f.id).type === "http://ns.dasch.swiss/repository#Organization"}
-    <div class=data>{findObjectById(f.id)?.name.join(", ")}</div>
+      <div class=data>{findObjectById(f.id)?.name.join(", ")}</div>
     {/if}
   {/each}
 {/if}
@@ -87,11 +92,11 @@
 <div class=label>Grant</div>
   {#each project?.grant as g}
     {#if findObjectById(g.id)?.number && findObjectById(g.id)?.url}
-    <a class=data href={findObjectById(g.id)?.url[0].url} target=_>{findObjectById(g.id)?.number}</a>
+      <a class=data href={findObjectById(g.id)?.url[0].url} target=_>{findObjectById(g.id)?.number}</a>
     {:else if findObjectById(g.id)?.number}
-    <span class="data">{findObjectById(g.id)?.number}</span>
+      <span class="data">{findObjectById(g.id)?.number}</span>
     {:else}
-    <span class="data">{findObjectById(findObjectById(g.id)?.funder[0].id)?.name.join(', ')}</span>
+      <span class="data">{findObjectById(findObjectById(g.id)?.funder[0].id)?.name.join(', ')}</span>
     {/if}
   {/each}
 {/if}

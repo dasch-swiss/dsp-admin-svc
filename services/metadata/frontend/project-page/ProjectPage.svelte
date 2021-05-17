@@ -36,7 +36,7 @@
     await tick();
     getDivHeight();
 
-    console.log(1, projectMetadata, project, tabs)
+    console.log('metadata', projectMetadata, 'project', project)
   };
 
   const handleData = (val: any) => {
