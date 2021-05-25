@@ -195,9 +195,9 @@ load(
 
 # get json-server docker image
 container_pull(
-  name = "json_server",
-  registry = "docker.io",
-  repository = "daschswiss/json-server",
-  # 'tag' is also supported, but digest is encouraged for reproducibility.
-  digest = "sha256:cba2406ac6510e72cd7a0f85becb51b9f8adcb1622c509d2f69392627729b1d8",
+    name = "json_server",
+    # 'tag' is also supported, but digest is encouraged for reproducibility.
+    digest = "sha256:cba2406ac6510e72cd7a0f85becb51b9f8adcb1622c509d2f69392627729b1d8",
+    registry = "docker.io",
+    repository = "daschswiss/json-server",
 )

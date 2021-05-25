@@ -53,6 +53,30 @@ admin-service-test: ## run all admin-service tests
 	@bazel test //services/admin/backend/...
 
 #################################
+# Auth service targets
+#################################
+
+.PHONY: auth-docker-build
+auth-docker-build: build ## publish linux/amd64 platform image locally
+	@bazel run --platforms=@io_bazel_rules_go//go/toolchain:linux_amd64 //services/auth:image -- --norun
+
+.PHONY: auth-docker-publish
+auth-docker-publish: ## publish linux/amd64 platform image to Dockerhub
+	@bazel run --platforms=@io_bazel_rules_go//go/toolchain:linux_amd64 //services/auth:push
+
+.PHONY: auth-docker-run
+auth-docker-run: auth-docker-build ## build and run docker image
+	@docker run --rm -p 3001:3001 bazel/services/auth:image
+
+.PHONY: auth-service-run
+auth-service-run: build ## start the auth-service
+	@bazel run //services/auth
+
+.PHONY: auth-service-test
+auth-service-test: ## run all auth-service tests
+	@bazel test //services/auth/...
+
+#################################
 # Metadata service targets
 #################################
 

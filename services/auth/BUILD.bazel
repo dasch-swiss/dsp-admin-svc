@@ -1,0 +1,44 @@
+package(default_visibility = ["//visibility:public"])
+
+load("@io_bazel_rules_docker//container:container.bzl", "container_push")
+
+# push to dockerhub
+container_push(
+    name = "push",
+    format = "Docker",
+    image = ":image",
+    registry = "index.docker.io",
+    repository = "daschswiss/dsp-auth-service",
+    tag = "{BUILD_SCM_TAG}",
+)
+
+load("@io_bazel_rules_docker//go:image.bzl", "go_image")
+
+go_image(
+    name = "image",
+    srcs = ["main.go"],
+    data = [
+        "//services/auth/static",
+    ],
+    importpath = "github.com/dasch-swiss/dasch-service-platform/services/metadata/backend/fake-backend",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_github_gorilla_handlers//:handlers",
+        "@com_github_gorilla_mux//:mux",
+    ],
+)
+
+load("@io_bazel_rules_go//go:def.bzl", "go_binary")
+
+go_binary(
+    name = "auth",
+    srcs = ["main.go"],
+    data = [
+        "//services/auth/static",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_github_gorilla_handlers//:handlers",
+        "@com_github_gorilla_mux//:mux",
+    ],
+)
