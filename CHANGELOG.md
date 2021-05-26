@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.1](https://www.github.com/dasch-swiss/dasch-service-platform/compare/v1.0.0...v1.0.1) (2021-05-26)
+
+
+### Bug Fixes
+
+* **metadata-service:** snackbar handling + responsiveness ([#55](https://www.github.com/dasch-swiss/dasch-service-platform/issues/55)) ([77762ee](https://www.github.com/dasch-swiss/dasch-service-platform/commit/77762eef47588950b2e29191b08ac40a2b2b831c))
+
 ## [1.0.0](https://www.github.com/dasch-swiss/dasch-service-platform/compare/v0.0.3...v1.0.0) (2021-05-25)
 
 
