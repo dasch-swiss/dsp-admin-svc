@@ -17,6 +17,8 @@
 package valueobject
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"strconv"
 )
@@ -33,6 +35,19 @@ func NewShortCode(value string) (ShortCode, error) {
 	}
 
 	return ShortCode{value: value}, nil
+}
+
+func GenerateShortCode() (ShortCode, error) {
+	bytes := make([]byte, 2)
+	if _, err := rand.Read(bytes); err != nil {
+		return ShortCode{}, fmt.Errorf("unable to generate short code")
+	}
+
+	// TODO: check whether or not the generated short code is already in use
+
+	sc, _ := NewShortCode(hex.EncodeToString(bytes))
+
+	return sc, nil
 }
 
 // String implements the fmt.Stringer interface.

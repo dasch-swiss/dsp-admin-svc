@@ -55,14 +55,15 @@ func createProject(service project.UseCase) http.Handler {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(5)*time.Second)
 		defer cancel()
 
-		// convert input strings to value objects
-		sc, err := valueobject.NewShortCode(input.ShortCode)
+		// generate a new short code
+		sc, err := valueobject.GenerateShortCode()
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
 			return
 		}
 
+		// convert input strings to value objects
 		sn, err := valueobject.NewShortName(input.ShortName)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
