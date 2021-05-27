@@ -129,7 +129,7 @@ You will then see this project deletion event in your event store on http://loca
 To get a list of all the projects:
 
 URL:
-```GET http://localhost:8080/v1/projects/```
+```GET http://localhost:8080/v1/projects```
 
 To get a project:
 
