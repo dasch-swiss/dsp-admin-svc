@@ -31,7 +31,6 @@ import (
 func TestProject_CreateProject(t *testing.T) {
 
 	expectedAggregateType := "http://ns.dasch.swiss/admin#Project"
-	expectedShortCode := "00FF"
 	expectedShortName := "short name"
 	expectedLongName := "project long name"
 	expectedDescription := "project description"
@@ -40,10 +39,6 @@ func TestProject_CreateProject(t *testing.T) {
 	service := project.NewService(repo)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(5)*time.Second)
 	defer cancel()
-
-	// create short code value object
-	sc, err := valueobject.NewShortCode(expectedShortCode)
-	assert.Nil(t, err)
 
 	// create short name value object
 	sn, err := valueobject.NewShortName(expectedShortName)
@@ -57,14 +52,14 @@ func TestProject_CreateProject(t *testing.T) {
 	desc, err := valueobject.NewDescription(expectedDescription)
 	assert.Nil(t, err)
 
-	projectId, err := service.CreateProject(ctx, sc, sn, ln, desc)
+	projectId, err := service.CreateProject(ctx, sn, ln, desc)
 	assert.Nil(t, err)
 
 	// get project
 	foundProject, err := service.GetProject(ctx, projectId)
 	assert.Nil(t, err)
 	assert.Equal(t, expectedAggregateType, foundProject.AggregateType().String())
-	assert.Equal(t, expectedShortCode, foundProject.ShortCode().String())
+	assert.Len(t, foundProject.ShortCode().String(), 4)
 	assert.Equal(t, expectedShortName, foundProject.ShortName().String())
 	assert.Equal(t, expectedLongName, foundProject.LongName().String())
 	assert.Equal(t, expectedDescription, foundProject.Description().String())
@@ -193,7 +188,7 @@ func TestProject_MigrateProject(t *testing.T) {
 	assert.Nil(t, err)
 
 	// migrate (create) project
-	projectId, err := service.CreateProject(ctx, sc, sn, ln, desc)
+	projectId, err := service.MigrateProject(ctx, sc, sn, ln, desc)
 	assert.Nil(t, err)
 
 	// get migrated project

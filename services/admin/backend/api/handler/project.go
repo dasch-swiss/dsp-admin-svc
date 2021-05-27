@@ -55,14 +55,6 @@ func createProject(service project.UseCase) http.Handler {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(5)*time.Second)
 		defer cancel()
 
-		// generate a new short code
-		sc, err := valueobject.GenerateShortCode()
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
-			return
-		}
-
 		// convert input strings to value objects
 		sn, err := valueobject.NewShortName(input.ShortName)
 		if err != nil {
@@ -85,7 +77,7 @@ func createProject(service project.UseCase) http.Handler {
 			return
 		}
 
-		id, err := service.CreateProject(ctx, sc, sn, ln, desc)
+		id, err := service.CreateProject(ctx, sn, ln, desc)
 		if err != nil {
 			log.Println(err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
@@ -423,7 +415,7 @@ func migrateProject(service project.UseCase) http.Handler {
 		}
 
 		// create the project
-		id, err := service.CreateProject(ctx, sc, sn, ln, desc)
+		id, err := service.MigrateProject(ctx, sc, sn, ln, desc)
 		if err != nil {
 			log.Println(err.Error())
 			w.WriteHeader(http.StatusInternalServerError)

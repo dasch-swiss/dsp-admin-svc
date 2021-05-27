@@ -35,16 +35,34 @@ func NewService(r Repository) *Service {
 }
 
 //create new project
-func (s *Service) CreateProject(ctx context.Context, shortCode valueobject.ShortCode, shortName valueobject.ShortName, longName valueobject.LongName, description valueobject.Description) (valueobject.Identifier, error) {
+func (s *Service) CreateProject(ctx context.Context, shortName valueobject.ShortName, longName valueobject.LongName, description valueobject.Description) (valueobject.Identifier, error) {
 
+	// generate new uuid
 	id, _ := valueobject.NewIdentifier()
 
-	e := project.NewAggregate(id, shortCode, shortName, longName, description)
+	// initialize an array of existing short codes
+	var existingShortCodes []valueobject.ShortCode
 
+	// get a list of all the projects
+	existingProjects, _ := s.ListProjects(ctx, true)
+
+	// loop through each project and add each short code to the array of existing short codes
+	for _, proj := range existingProjects {
+		existingShortCodes = append(existingShortCodes, proj.ShortCode())
+	}
+
+	// generate unique short code
+	sc, _ := valueobject.GenerateShortCode(existingShortCodes)
+
+	// create project aggregate
+	e := project.NewAggregate(id, sc, shortName, longName, description)
+
+	// save event to event store
 	if _, err := s.repo.Save(ctx, e); err != nil {
 		return valueobject.Identifier{}, err
 	}
 
+	// return the uuid of the created project
 	return id, nil
 }
 

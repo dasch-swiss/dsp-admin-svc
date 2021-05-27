@@ -40,7 +40,9 @@ func TestNewInvalidShortCode(t *testing.T) {
 }
 
 func TestGenerateShortCode(t *testing.T) {
-	a, _ := valueobject.GenerateShortCode()
+	var existingShortCodes []valueobject.ShortCode
+
+	a, _ := valueobject.GenerateShortCode(existingShortCodes)
 	assert.Len(t, a.String(), 4)
 }
 
