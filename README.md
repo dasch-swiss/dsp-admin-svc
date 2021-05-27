@@ -59,6 +59,82 @@ To run, build and publish a docker image of the server, use the commands `metada
 
 To use the legacy metadata json-server, use the make targets `make metadata-json-server`, `make metadata-json-server-docker-build`, `make metadata-json-server-docker-run` and `make metadata-json-server-docker-publish`.
 
+### Admin
+
+#### Server
+
+This service depends on a running event store.
+
+For testing, you can create a local event store by running:
+
+```docker run --name esdb-node -it -p 2113:2113 -p 1113:1113 eventstore/eventstore:latest --insecure --run-projections=All --enable-atom-pub-over-http=true```
+
+You can view the event store on http://localhost:2113/
+
+Then run:
+
+```make admin-service-run```
+
+The terminal will hang on:
+
+```/private/var/tmp/_bazel_username/6ae9f9aa2327923c1b3eb247cfa2ec4b/execroot/swiss_dasch_dsp_repository/bazel-out/darwin-fastbuild/bin/services/admin/backend/cmd/cmd_/cmd.runfiles/swiss_dasch_dsp_repository```
+
+This is because of Negroni, which will log out the results of your API requests.
+
+Now you can send requests to the API via Postman or your preferred application/method.
+
+Example create project request:
+
+URL:
+```POST http://localhost:8080/v1/projects```
+
+JSON request body:
+
+```json
+{
+  "shortName": "my proj",
+  "longName": "my projects name",
+  "description": "description of my project"
+}
+```
+
+You will then see this project creation event in your event store on http://localhost:2113 under the Stream Browser tab (you may need to refresh the page if you're currently on it).
+
+
+Example update project request:
+
+URL:
+```PUT http://localhost:8080/v1/projects/[uuid]```
+
+JSON request body:
+
+```json
+{
+  "shortCode": "ffff",
+  "shortName": "short",
+  "longName": "updated project name",
+  "description": "updated description of my project"
+}
+```
+
+You will then see this project update event in your event store on http://localhost:2113 under the Stream Browser tab (you may need to refresh the page if you're currently on it).
+
+Example delete project request:
+
+URL:
+```DELETE http://localhost:8080/v1/projects/[uuid]```
+
+You will then see this project deletion event in your event store on http://localhost:2113 under the Stream Browser tab (you may need to refresh the page if you're currently on it).
+
+To get a list of all the projects:
+
+URL:
+```GET http://localhost:8080/v1/projects/```
+
+To get a project:
+
+URL:
+```GET http://localhost:8080/v1/projects/[uuid]```
 
 ## Go dependencies
 
