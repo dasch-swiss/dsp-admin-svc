@@ -116,10 +116,6 @@ func createProject(service project.UseCase) http.Handler {
 			Description: p.Description().String(),
 			CreatedAt:   p.CreatedAt().String(),
 			CreatedBy:   p.CreatedBy().String(),
-			ChangedAt:   p.ChangedAt().String(),
-			ChangedBy:   p.ChangedBy().String(),
-			DeletedAt:   p.DeletedAt().String(),
-			DeletedBy:   p.DeletedBy().String(),
 		}
 
 		w.WriteHeader(http.StatusCreated)
@@ -230,6 +226,9 @@ func updateProject(service project.UseCase) http.Handler {
 			return
 		}
 
+		ca := up.ChangedAt().String()
+		cb := up.ChangedBy().String()
+
 		toJ := &presenter.Project{
 			ID:          up.ID(),
 			ShortCode:   up.ShortCode().String(),
@@ -238,10 +237,8 @@ func updateProject(service project.UseCase) http.Handler {
 			Description: up.Description().String(),
 			CreatedAt:   up.CreatedAt().String(),
 			CreatedBy:   up.CreatedBy().String(),
-			ChangedAt:   up.ChangedAt().String(),
-			ChangedBy:   up.ChangedBy().String(),
-			DeletedAt:   up.DeletedAt().String(),
-			DeletedBy:   up.DeletedBy().String(),
+			ChangedAt:   &ca,
+			ChangedBy:   &cb,
 		}
 
 		w.WriteHeader(http.StatusOK)
@@ -288,7 +285,7 @@ func getProject(service project.UseCase) http.Handler {
 		}
 		if p == nil {
 			w.WriteHeader(http.StatusNotFound)
-			w.Write([]byte("No p was returned"))
+			w.Write([]byte("No project was returned"))
 			return
 		}
 
@@ -300,11 +297,24 @@ func getProject(service project.UseCase) http.Handler {
 			Description: p.Description().String(),
 			CreatedAt:   p.CreatedAt().String(),
 			CreatedBy:   p.CreatedBy().String(),
-			ChangedAt:   p.ChangedAt().String(),
-			ChangedBy:   p.ChangedBy().String(),
-			DeletedAt:   p.DeletedAt().String(),
-			DeletedBy:   p.DeletedBy().String(),
 		}
+
+		if !p.ChangedAt().Time().IsZero() {
+			ca := p.ChangedAt().String()
+			cb := p.ChangedBy().String()
+
+			toJ.ChangedAt = &ca
+			toJ.ChangedBy = &cb
+		}
+
+		if !p.DeletedAt().Time().IsZero() {
+			da := p.DeletedAt().String()
+			db := p.DeletedBy().String()
+
+			toJ.DeletedAt = &da
+			toJ.DeletedBy = &db
+		}
+
 		if err := json.NewEncoder(w).Encode(toJ); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("Failed encoding p to JSON"))
@@ -359,8 +369,8 @@ func deleteProject(service project.UseCase) http.Handler {
 
 		toJ := &presenter.DeleteProject{
 			ID:        data.ID(),
-			DeletedAt: data.ChangedAt().String(),
-			DeletedBy: data.ChangedBy().String(),
+			DeletedAt: data.DeletedAt().String(),
+			DeletedBy: data.DeletedBy().String(),
 		}
 		if err := json.NewEncoder(w).Encode(toJ); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -454,10 +464,6 @@ func migrateProject(service project.UseCase) http.Handler {
 			Description: p.Description().String(),
 			CreatedAt:   p.CreatedAt().String(),
 			CreatedBy:   p.CreatedBy().String(),
-			ChangedAt:   p.ChangedAt().String(),
-			ChangedBy:   p.ChangedBy().String(),
-			DeletedAt:   p.DeletedAt().String(),
-			DeletedBy:   p.DeletedBy().String(),
 		}
 
 		w.WriteHeader(http.StatusCreated)
@@ -507,7 +513,7 @@ func listProjects(service project.UseCase) http.Handler {
 
 		for _, p := range projects {
 
-			toJ = append(toJ, presenter.Project{
+			proj := presenter.Project{
 				ID:          p.ID(),
 				ShortCode:   p.ShortCode().String(),
 				ShortName:   p.ShortName().String(),
@@ -515,11 +521,26 @@ func listProjects(service project.UseCase) http.Handler {
 				Description: p.Description().String(),
 				CreatedAt:   p.CreatedAt().String(),
 				CreatedBy:   p.CreatedBy().String(),
-				ChangedAt:   p.ChangedAt().String(),
-				ChangedBy:   p.ChangedBy().String(),
-				DeletedAt:   p.DeletedAt().String(),
-				DeletedBy:   p.DeletedBy().String(),
-			})
+			}
+
+			if !p.ChangedAt().Time().IsZero() {
+				ca := p.ChangedAt().String()
+				cb := p.ChangedBy().String()
+
+				proj.ChangedAt = &ca
+				proj.ChangedBy = &cb
+			}
+
+			if !p.DeletedAt().Time().IsZero() {
+				da := p.DeletedAt().String()
+				db := p.DeletedBy().String()
+
+				proj.DeletedAt = &da
+				proj.DeletedBy = &db
+			}
+
+			toJ = append(toJ, proj)
+
 		}
 
 		if err := json.NewEncoder(w).Encode(toJ); err != nil {

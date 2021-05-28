@@ -30,10 +30,10 @@ type Project struct {
 	Description string                 `json:"description"`
 	CreatedAt   string                 `json:"createdAt"`
 	CreatedBy   string                 `json:"createdBy"`
-	ChangedAt   string                 `json:"changedAt"`
-	ChangedBy   string                 `json:"changedBy"`
-	DeletedAt   string                 `json:"deletedAt"`
-	DeletedBy   string                 `json:"deletedBy"`
+	ChangedAt   *string                `json:"changedAt"`
+	ChangedBy   *string                `json:"changedBy"`
+	DeletedAt   *string                `json:"deletedAt"`
+	DeletedBy   *string                `json:"deletedBy"`
 }
 
 //DeleteProject data
