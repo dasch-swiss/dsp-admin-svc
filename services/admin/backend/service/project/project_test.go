@@ -200,3 +200,10 @@ func TestProject_MigrateProject(t *testing.T) {
 	assert.Equal(t, expectedLongName, migratedProject.LongName().String())
 	assert.Equal(t, expectedDescription, migratedProject.Description().String())
 }
+
+func TestProject_GenerateUniqueShortCode(t *testing.T) {
+	var existingShortCodes []valueobject.ShortCode
+
+	a, _ := project.GenerateUniqueShortCode(existingShortCodes)
+	assert.Len(t, a.String(), 4)
+}

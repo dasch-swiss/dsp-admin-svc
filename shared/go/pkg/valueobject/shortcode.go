@@ -17,8 +17,6 @@
 package valueobject
 
 import (
-	"crypto/rand"
-	"encoding/hex"
 	"fmt"
 	"strconv"
 )
@@ -35,31 +33,6 @@ func NewShortCode(value string) (ShortCode, error) {
 	}
 
 	return ShortCode{value: value}, nil
-}
-
-func GenerateShortCode(existingShortCodes []ShortCode) (ShortCode, error) {
-
-	// https://golang.org/pkg/crypto/rand/#example_Read
-	bytes := make([]byte, 2)
-	if _, err := rand.Read(bytes); err != nil {
-		return ShortCode{}, fmt.Errorf("unable to generate short code")
-	}
-
-	hexAsString := hex.EncodeToString(bytes)
-
-	// check if the generated short code is already in use
-	// if it is, call the method again repeatedly until a unique short code is generated
-	if len(existingShortCodes) > 0 {
-		for _, esc := range existingShortCodes {
-			if hexAsString == esc.String() {
-				GenerateShortCode(existingShortCodes)
-			}
-		}
-	}
-
-	sc, _ := NewShortCode(hexAsString)
-
-	return sc, nil
 }
 
 // String implements the fmt.Stringer interface.

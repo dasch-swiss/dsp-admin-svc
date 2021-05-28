@@ -39,13 +39,6 @@ func TestNewInvalidShortCode(t *testing.T) {
 	assert.NotNil(t, err3)
 }
 
-func TestGenerateShortCode(t *testing.T) {
-	var existingShortCodes []valueobject.ShortCode
-
-	a, _ := valueobject.GenerateShortCode(existingShortCodes)
-	assert.Len(t, a.String(), 4)
-}
-
 func TestShortCode_Equals(t *testing.T) {
 	a, _ := valueobject.NewShortCode("00FF")
 	b, _ := valueobject.NewShortCode("00FF")

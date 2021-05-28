@@ -18,6 +18,9 @@ package project
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
+	"fmt"
 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity/project"
 	"github.com/dasch-swiss/dasch-service-platform/shared/go/pkg/valueobject"
 )
@@ -52,7 +55,7 @@ func (s *Service) CreateProject(ctx context.Context, shortName valueobject.Short
 	}
 
 	// generate unique short code
-	sc, _ := valueobject.GenerateShortCode(existingShortCodes)
+	sc, _ := GenerateUniqueShortCode(existingShortCodes)
 
 	// create project aggregate
 	e := project.NewAggregate(id, sc, shortName, longName, description)
@@ -174,4 +177,29 @@ func isIdentical(p project.Aggregate, shortCode valueobject.ShortCode, shortName
 	}
 
 	return false
+}
+
+func GenerateUniqueShortCode(existingShortCodes []valueobject.ShortCode) (valueobject.ShortCode, error) {
+
+	// https://golang.org/pkg/crypto/rand/#example_Read
+	bytes := make([]byte, 2)
+	if _, err := rand.Read(bytes); err != nil {
+		return valueobject.ShortCode{}, fmt.Errorf("unable to generate short code")
+	}
+
+	hexAsString := hex.EncodeToString(bytes)
+
+	// check if the generated short code is already in use
+	// if it is, call the method again repeatedly until a unique short code is generated
+	if len(existingShortCodes) > 0 {
+		for _, esc := range existingShortCodes {
+			if hexAsString == esc.String() {
+				GenerateUniqueShortCode(existingShortCodes)
+			}
+		}
+	}
+
+	sc, _ := valueobject.NewShortCode(hexAsString)
+
+	return sc, nil
 }
