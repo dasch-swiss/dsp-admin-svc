@@ -30,13 +30,8 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start-frontend": "npm run start-admin & npm run start-metadata",
-    "start-admin": "sirv public/admin -s -p 5000",
-    "start-metadata": "sirv public/metadata -s -p 5001",
-    "validate": "svelte-check",
-    "node-start-dev": "ibazel run //services/metadata/backend:bin",
-    "node-start-prod": "bazel run //services/metadata/backend:bin",
-    "uml": "puml generate -s docs/services/metadata/domain-entities.puml -o docs/services/metadata/domain-entities.svg && puml generate -s docs/services/metadata/api-example.puml -o docs/services/metadata/api-example.svg"
+    "start-frontend": "sirv public/admin -s -p 5000",
+    "validate": "svelte-check"
   },
   "dependencies": {
     "axios": "^0.21.1",
