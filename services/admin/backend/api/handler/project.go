@@ -25,6 +25,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -296,14 +298,14 @@ func getProject(service project.UseCase) func(w http.ResponseWriter, r *http.Req
 
 		// check JWT token to make sure user is authenticated
 		// an object containing the users info is returned by ExtractTokenMetadata (currently not used, hence the underscore)
-		_, tokenErr := ExtractTokenMetadata(r)
+		tokenAuth, tokenErr := ExtractTokenMetadata(r)
 		if tokenErr != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(tokenErr.Error()))
 			return
 		}
 
-		//log.Print(tokenAuth.UserId)
+		log.Print(tokenAuth.UserId)
 
 		// get variables from request url
 		vars := mux.Vars(r)
@@ -450,8 +452,16 @@ func listProjects(service project.UseCase) func(w http.ResponseWriter, r *http.R
 
 		// check JWT token to make sure user is authenticated
 		// an object containing the users info is returned by ExtractTokenMetadata (currently not used, hence the underscore)
-		_, tokenErr := ExtractTokenMetadata(r)
+		userInfo, tokenErr := ExtractTokenMetadata(r)
 		if tokenErr != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(tokenErr.Error()))
+			return
+		}
+
+		log.Print("USER INFO: ", userInfo)
+
+		if userInfo.Permissions == nil || !stringInSlice("projects:read", userInfo.Permissions) {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(tokenErr.Error()))
 			return
@@ -521,6 +531,19 @@ func listProjects(service project.UseCase) func(w http.ResponseWriter, r *http.R
 	}
 }
 
+// because WHY would golang have this built-in
+func stringInSlice(a string, list []string) bool {
+	if len(list) == 0 {
+		return false
+	}
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
+}
+
 //MakeProjectHandlers make url handlers for creating, updating, deleting, and getting projects
 func MakeProjectHandlers(r *mux.Router, service project.UseCase) {
 
@@ -588,12 +611,19 @@ func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if ok && token.Valid {
+		// log.Print("Claims: ", claims)
 		userId, ok := claims["sub"].(string)
 		if !ok {
 			return nil, err
 		}
+
+		permissions, permissionsErr := getPermissions(r)
+		if permissionsErr != nil {
+			return nil, permissionsErr
+		}
 		return &AccessDetails{
 			UserId: userId,
+			Permissions: permissions,
 		}, nil
 	}
 	return nil, err
@@ -601,6 +631,7 @@ func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
 
 type AccessDetails struct {
 	UserId string
+	Permissions []string
 }
 
 func getPublicKey() []byte {
@@ -610,4 +641,62 @@ func getPublicKey() []byte {
 	}
 
 	return publicKey
+}
+
+// Requesting Party Token
+type RPT struct {
+	Scopes []string
+	Rsid string
+	Rsname string
+}
+
+func getPermissions(r *http.Request) ([]string, error) {
+	_, err := VerifyToken(r)
+	if err != nil {
+		return nil, err
+	}
+
+	endpoint := "https://auth.dasch.swiss/auth/realms/permissions-test/protocol/openid-connect/token"
+	data := url.Values{}
+	data.Set("grant_type", "urn:ietf:params:oauth:grant-type:uma-ticket")
+	data.Set("audience", "projects-api")
+	data.Set("response_mode", "permissions")
+
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", endpoint, strings.NewReader(data.Encode())) // URL-encoded payload
+	if err != nil {
+		log.Fatal(err)
+	}
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("Authorization", r.Header.Get("Authorization"))
+	r.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
+
+	res, err := client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// log.Print(string(body))
+
+	var permissions []string
+
+	var rpt []RPT
+
+	err3 := json.Unmarshal(body, &rpt)
+	if err3 != nil {
+		log.Print("UNMARSHALLING PERMISSIONS FAILED")
+	}
+
+	for _, tok := range rpt {
+		for _, scope := range tok.Scopes {
+			permissions = append(permissions, scope)
+		}
+	}
+
+	// log.Print("PERMISSIONS: ", permissions)
+	return permissions, err
 }

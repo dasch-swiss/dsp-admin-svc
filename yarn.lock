@@ -1701,6 +1701,11 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
+keycloak-authz@^4.8.3:
+  version "4.8.3"
+  resolved "https://registry.npmjs.org/keycloak-authz/-/keycloak-authz-4.8.3.tgz"
+  integrity sha512-UtU8eMLZeVc7U7u7WsPaZBhGyaSEydnuMHBV5yk/7Mr+n+irE8UdBDpWGo2BGW3K5ssVj1wKo3rQRfgogaIQ9g==
+
 keycloak-js@^14.0.0:
   version "14.0.0"
   resolved "https://registry.npmjs.org/keycloak-js/-/keycloak-js-14.0.0.tgz"
