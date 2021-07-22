@@ -50,9 +50,15 @@ func createProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		// check JWT token to make sure user is authenticated
-		// an object containing the users info is returned by ExtractTokenMetadata (currently not used, hence the underscore)
-		_, tokenErr := ExtractTokenMetadata(r)
+		// an object containing the users info is returned by ExtractTokenMetadata
+		userInfo, tokenErr := ExtractTokenMetadata(r)
 		if tokenErr != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(tokenErr.Error()))
+			return
+		}
+
+		if !stringInSlice("projects:create", userInfo.Permissions) {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(tokenErr.Error()))
 			return
@@ -163,9 +169,17 @@ func updateProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		// check JWT token to make sure user is authenticated
-		// an object containing the users info is returned by ExtractTokenMetadata (currently not used, hence the underscore)
-		_, tokenErr := ExtractTokenMetadata(r)
+		// an object containing the users info is returned by ExtractTokenMetadata
+		userInfo, tokenErr := ExtractTokenMetadata(r)
 		if tokenErr != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(tokenErr.Error()))
+			return
+		}
+
+		log.Print("USER PERMISSIONS: ", userInfo.Permissions)
+
+		if userInfo.Permissions == nil || !stringInSlice("projects:update", userInfo.Permissions) {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(tokenErr.Error()))
 			return
@@ -297,15 +311,21 @@ func getProject(service project.UseCase) func(w http.ResponseWriter, r *http.Req
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		// check JWT token to make sure user is authenticated
-		// an object containing the users info is returned by ExtractTokenMetadata (currently not used, hence the underscore)
-		tokenAuth, tokenErr := ExtractTokenMetadata(r)
+		// an object containing the users info is returned by ExtractTokenMetadata
+		userInfo, tokenErr := ExtractTokenMetadata(r)
 		if tokenErr != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(tokenErr.Error()))
 			return
 		}
 
-		log.Print(tokenAuth.UserId)
+		log.Print("USER PERMISSIONS: ", userInfo.Permissions)
+
+		if userInfo.Permissions == nil || !stringInSlice("projects:read", userInfo.Permissions) {
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(tokenErr.Error()))
+			return
+		}
 
 		// get variables from request url
 		vars := mux.Vars(r)
@@ -370,9 +390,17 @@ func deleteProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		// check JWT token to make sure user is authenticated
-		// an object containing the users info is returned by ExtractTokenMetadata (currently not used, hence the underscore)
-		_, tokenErr := ExtractTokenMetadata(r)
+		// an object containing the users info is returned by ExtractTokenMetadata
+		userInfo, tokenErr := ExtractTokenMetadata(r)
 		if tokenErr != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(tokenErr.Error()))
+			return
+		}
+
+		log.Print("USER PERMISSIONS: ", userInfo.Permissions)
+
+		if userInfo.Permissions == nil || !stringInSlice("projects:delete", userInfo.Permissions) {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(tokenErr.Error()))
 			return
@@ -451,7 +479,7 @@ func listProjects(service project.UseCase) func(w http.ResponseWriter, r *http.R
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		// check JWT token to make sure user is authenticated
-		// an object containing the users info is returned by ExtractTokenMetadata (currently not used, hence the underscore)
+		// an object containing the users info is returned by ExtractTokenMetadata
 		userInfo, tokenErr := ExtractTokenMetadata(r)
 		if tokenErr != nil {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -619,8 +647,11 @@ func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
 
 		permissions, permissionsErr := getPermissions(r)
 		if permissionsErr != nil {
+			log.Print("ERROR ERROR ERROR 1")
+			log.Print(permissionsErr.Error())
 			return nil, permissionsErr
 		}
+
 		return &AccessDetails{
 			UserId: userId,
 			Permissions: permissions,
@@ -663,40 +694,44 @@ func getPermissions(r *http.Request) ([]string, error) {
 	data.Set("response_mode", "permissions")
 
 	client := &http.Client{}
-	req, err := http.NewRequest("POST", endpoint, strings.NewReader(data.Encode())) // URL-encoded payload
-	if err != nil {
-		log.Fatal(err)
+	req, reqErr := http.NewRequest("POST", endpoint, strings.NewReader(data.Encode())) // URL-encoded payload
+	if reqErr != nil {
+		log.Fatal(reqErr)
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Add("Authorization", r.Header.Get("Authorization"))
 	r.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
 
-	res, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err)
+	res, resErr := client.Do(req)
+	if resErr != nil {
+		return nil, resErr
 	}
 	defer res.Body.Close()
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		log.Fatal(err)
+
+	// body is a byte array which is needed for unmarshalling
+	body, bodyErr := ioutil.ReadAll(res.Body)
+	if bodyErr != nil {
+		return nil, bodyErr
 	}
-	// log.Print(string(body))
+	log.Print(string(body)) // [{"scopes":["projects:read"],"rsid":"b1bc67cb-b14e-451c-97d3-ad65a06a6f40","rsname":"Read Projects Resource"}]
 
 	var permissions []string
 
 	var rpt []RPT
 
-	err3 := json.Unmarshal(body, &rpt)
-	if err3 != nil {
+	unmarshallError := json.Unmarshal(body, &rpt)
+	if unmarshallError != nil {
 		log.Print("UNMARSHALLING PERMISSIONS FAILED")
+		return nil, unmarshallError
 	}
 
 	for _, tok := range rpt {
 		for _, scope := range tok.Scopes {
+			log.Print("scope found: ", scope)
 			permissions = append(permissions, scope)
 		}
 	}
 
-	// log.Print("PERMISSIONS: ", permissions)
+	log.Print("PERMISSIONS: ", permissions)
 	return permissions, err
 }
