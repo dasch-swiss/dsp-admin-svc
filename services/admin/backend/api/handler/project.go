@@ -20,16 +20,11 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"github.com/golang-jwt/jwt"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
-	"strconv"
-	"strings"
 	"time"
 
+	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/api/middleware"
 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/api/presenter"
 	projectEntity "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/entity/project"
 	"github.com/dasch-swiss/dasch-service-platform/services/admin/backend/service/project"
@@ -51,16 +46,17 @@ func createProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 
 		// check JWT token to make sure user is authenticated
 		// an object containing the users info is returned by ExtractTokenMetadata
-		userInfo, tokenErr := ExtractTokenMetadata(r)
+		userInfo, tokenErr := middleware.ExtractTokenMetadata(r)
 		if tokenErr != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(tokenErr.Error()))
 			return
 		}
 
-		if !stringInSlice("projects:create", userInfo.Permissions) {
+		if userInfo.Permissions == nil || !userHasPermission("projects:create", userInfo.Permissions) {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(tokenErr.Error()))
+			// TODO: move this to error entity
+			w.Write([]byte("user does not have permission to create a project"))
 			return
 		}
 
@@ -170,18 +166,17 @@ func updateProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 
 		// check JWT token to make sure user is authenticated
 		// an object containing the users info is returned by ExtractTokenMetadata
-		userInfo, tokenErr := ExtractTokenMetadata(r)
+		userInfo, tokenErr := middleware.ExtractTokenMetadata(r)
 		if tokenErr != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(tokenErr.Error()))
 			return
 		}
 
-		log.Print("USER PERMISSIONS: ", userInfo.Permissions)
-
-		if userInfo.Permissions == nil || !stringInSlice("projects:update", userInfo.Permissions) {
+		if userInfo.Permissions == nil || !userHasPermission("projects:update", userInfo.Permissions) {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(tokenErr.Error()))
+			// TODO: move this to error entity
+			w.Write([]byte("user does not have permission to update a project"))
 			return
 		}
 
@@ -312,18 +307,17 @@ func getProject(service project.UseCase) func(w http.ResponseWriter, r *http.Req
 
 		// check JWT token to make sure user is authenticated
 		// an object containing the users info is returned by ExtractTokenMetadata
-		userInfo, tokenErr := ExtractTokenMetadata(r)
+		userInfo, tokenErr := middleware.ExtractTokenMetadata(r)
 		if tokenErr != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(tokenErr.Error()))
 			return
 		}
 
-		log.Print("USER PERMISSIONS: ", userInfo.Permissions)
-
-		if userInfo.Permissions == nil || !stringInSlice("projects:read", userInfo.Permissions) {
+		if userInfo.Permissions == nil || !userHasPermission("projects:read", userInfo.Permissions) {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(tokenErr.Error()))
+			// TODO: move this to error entity
+			w.Write([]byte("user does not have permission to view a project"))
 			return
 		}
 
@@ -391,18 +385,17 @@ func deleteProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 
 		// check JWT token to make sure user is authenticated
 		// an object containing the users info is returned by ExtractTokenMetadata
-		userInfo, tokenErr := ExtractTokenMetadata(r)
+		userInfo, tokenErr := middleware.ExtractTokenMetadata(r)
 		if tokenErr != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(tokenErr.Error()))
 			return
 		}
 
-		log.Print("USER PERMISSIONS: ", userInfo.Permissions)
-
-		if userInfo.Permissions == nil || !stringInSlice("projects:delete", userInfo.Permissions) {
+		if userInfo.Permissions == nil || !userHasPermission("projects:delete", userInfo.Permissions) {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(tokenErr.Error()))
+			// TODO: move this to error entity
+			w.Write([]byte("user does not have permission to delete a project"))
 			return
 		}
 
@@ -480,18 +473,17 @@ func listProjects(service project.UseCase) func(w http.ResponseWriter, r *http.R
 
 		// check JWT token to make sure user is authenticated
 		// an object containing the users info is returned by ExtractTokenMetadata
-		userInfo, tokenErr := ExtractTokenMetadata(r)
+		userInfo, tokenErr := middleware.ExtractTokenMetadata(r)
 		if tokenErr != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(tokenErr.Error()))
 			return
 		}
 
-		log.Print("USER INFO: ", userInfo)
-
-		if userInfo.Permissions == nil || !stringInSlice("projects:read", userInfo.Permissions) {
+		if userInfo.Permissions == nil || !userHasPermission("projects:read", userInfo.Permissions) {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(tokenErr.Error()))
+			// TODO: move this to error entity
+			w.Write([]byte("user does not have permission to view the list of projects"))
 			return
 		}
 
@@ -559,13 +551,13 @@ func listProjects(service project.UseCase) func(w http.ResponseWriter, r *http.R
 	}
 }
 
-// because WHY would golang have this built-in
-func stringInSlice(a string, list []string) bool {
-	if len(list) == 0 {
+// Checks if a users list of permissions contains the provided permission
+func userHasPermission(permission string, permissionsList []string) bool {
+	if len(permissionsList) == 0 {
 		return false
 	}
-	for _, b := range list {
-		if b == a {
+	for _, p := range permissionsList {
+		if p == permission {
 			return true
 		}
 	}
@@ -584,154 +576,4 @@ func MakeProjectHandlers(r *mux.Router, service project.UseCase) {
 	r.HandleFunc("/v1/projects/{id}", getProject(service)).Methods("GET", "OPTIONS")
 
 	r.HandleFunc("/v1/projects", listProjects(service)).Methods("GET", "OPTIONS")
-}
-
-// ExtractToken extracts the JWT token from the header.
-func ExtractToken(r *http.Request) string {
-	bearToken := r.Header.Get("Authorization")
-	//normally Authorization the_token_xxx
-	strArr := strings.Split(bearToken, " ")
-	if len(strArr) == 2 {
-		return strArr[1]
-	}
-	return ""
-}
-
-// VerifyToken verifies the JWT token to ensure the public key was provided and it was signed via RSA.
-func VerifyToken(r *http.Request) (*jwt.Token, error) {
-	tokenString := ExtractToken(r)
-
-	key, err := jwt.ParseRSAPublicKeyFromPEM(getPublicKey())
-	if err != nil {
-		return nil, fmt.Errorf("error parsing RSA public key: %v\n", err)
-	}
-
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		//Make sure that the token method conform to "SigningMethodRSA"
-		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		return key, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return token, nil
-}
-
-// TokenValid checks if a JWT token is valid.
-func TokenValid(r *http.Request) error {
-	token, err := VerifyToken(r)
-	if err != nil {
-		return err
-	}
-	if _, ok := token.Claims.(jwt.Claims); !ok && !token.Valid {
-		return err
-	}
-	return nil
-}
-
-// ExtractTokenMetadata extracts the data contained within the JWT token and returns an AccessDetails object.
-func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
-	token, err := VerifyToken(r)
-	if err != nil {
-		return nil, err
-	}
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if ok && token.Valid {
-		// log.Print("Claims: ", claims)
-		userId, ok := claims["sub"].(string)
-		if !ok {
-			return nil, err
-		}
-
-		permissions, permissionsErr := getPermissions(r)
-		if permissionsErr != nil {
-			log.Print("ERROR ERROR ERROR 1")
-			log.Print(permissionsErr.Error())
-			return nil, permissionsErr
-		}
-
-		return &AccessDetails{
-			UserId: userId,
-			Permissions: permissions,
-		}, nil
-	}
-	return nil, err
-}
-
-type AccessDetails struct {
-	UserId string
-	Permissions []string
-}
-
-func getPublicKey() []byte {
-	publicKey, err := ioutil.ReadFile("services/admin/backend/config/keycloak_realm_key.rsa.pub")
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	return publicKey
-}
-
-// Requesting Party Token
-type RPT struct {
-	Scopes []string
-	Rsid string
-	Rsname string
-}
-
-func getPermissions(r *http.Request) ([]string, error) {
-	_, err := VerifyToken(r)
-	if err != nil {
-		return nil, err
-	}
-
-	endpoint := "https://auth.dasch.swiss/auth/realms/permissions-test/protocol/openid-connect/token"
-	data := url.Values{}
-	data.Set("grant_type", "urn:ietf:params:oauth:grant-type:uma-ticket")
-	data.Set("audience", "projects-api")
-	data.Set("response_mode", "permissions")
-
-	client := &http.Client{}
-	req, reqErr := http.NewRequest("POST", endpoint, strings.NewReader(data.Encode())) // URL-encoded payload
-	if reqErr != nil {
-		log.Fatal(reqErr)
-	}
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Add("Authorization", r.Header.Get("Authorization"))
-	r.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
-
-	res, resErr := client.Do(req)
-	if resErr != nil {
-		return nil, resErr
-	}
-	defer res.Body.Close()
-
-	// body is a byte array which is needed for unmarshalling
-	body, bodyErr := ioutil.ReadAll(res.Body)
-	if bodyErr != nil {
-		return nil, bodyErr
-	}
-	log.Print(string(body)) // [{"scopes":["projects:read"],"rsid":"b1bc67cb-b14e-451c-97d3-ad65a06a6f40","rsname":"Read Projects Resource"}]
-
-	var permissions []string
-
-	var rpt []RPT
-
-	unmarshallError := json.Unmarshal(body, &rpt)
-	if unmarshallError != nil {
-		log.Print("UNMARSHALLING PERMISSIONS FAILED")
-		return nil, unmarshallError
-	}
-
-	for _, tok := range rpt {
-		for _, scope := range tok.Scopes {
-			log.Print("scope found: ", scope)
-			permissions = append(permissions, scope)
-		}
-	}
-
-	log.Print("PERMISSIONS: ", permissions)
-	return permissions, err
 }

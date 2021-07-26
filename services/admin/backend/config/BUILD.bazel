@@ -6,7 +6,7 @@ go_library(
         "config_dev.go",
     ],
     data = [
-        "keycloak_realm_key.rsa.pub"
+        "keycloak_realm_key.rsa.pub",
     ],
     importpath = "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/config",
     visibility = ["//visibility:public"],
