@@ -53,10 +53,10 @@ func createProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 			return
 		}
 
+		// ensure the user has sufficient permissions for the action
 		if userInfo.Permissions == nil || !userHasPermission("projects:create", userInfo.Permissions) {
 			w.WriteHeader(http.StatusUnauthorized)
-			// TODO: move this to error entity
-			w.Write([]byte("user does not have permission to create a project"))
+			w.Write([]byte(projectEntity.ErrUserDoesNotHaveCreatePermission.Error()))
 			return
 		}
 
@@ -173,10 +173,10 @@ func updateProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 			return
 		}
 
+		// ensure the user has sufficient permissions for the action
 		if userInfo.Permissions == nil || !userHasPermission("projects:update", userInfo.Permissions) {
 			w.WriteHeader(http.StatusUnauthorized)
-			// TODO: move this to error entity
-			w.Write([]byte("user does not have permission to update a project"))
+			w.Write([]byte(projectEntity.ErrUserDoesNotHaveUpdatePermission.Error()))
 			return
 		}
 
@@ -314,10 +314,10 @@ func getProject(service project.UseCase) func(w http.ResponseWriter, r *http.Req
 			return
 		}
 
+		// ensure the user has sufficient permissions for the action
 		if userInfo.Permissions == nil || !userHasPermission("projects:read", userInfo.Permissions) {
 			w.WriteHeader(http.StatusUnauthorized)
-			// TODO: move this to error entity
-			w.Write([]byte("user does not have permission to view a project"))
+			w.Write([]byte(projectEntity.ErrUserDoesNotHaveReadPermission.Error()))
 			return
 		}
 
@@ -392,10 +392,10 @@ func deleteProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 			return
 		}
 
+		// ensure the user has sufficient permissions for the action
 		if userInfo.Permissions == nil || !userHasPermission("projects:delete", userInfo.Permissions) {
 			w.WriteHeader(http.StatusUnauthorized)
-			// TODO: move this to error entity
-			w.Write([]byte("user does not have permission to delete a project"))
+			w.Write([]byte(projectEntity.ErrUserDoesNotHaveDeletePermission.Error()))
 			return
 		}
 
@@ -480,10 +480,10 @@ func listProjects(service project.UseCase) func(w http.ResponseWriter, r *http.R
 			return
 		}
 
+		// ensure the user has sufficient permissions for the action
 		if userInfo.Permissions == nil || !userHasPermission("projects:read", userInfo.Permissions) {
 			w.WriteHeader(http.StatusUnauthorized)
-			// TODO: move this to error entity
-			w.Write([]byte("user does not have permission to view the list of projects"))
+			w.Write([]byte(projectEntity.ErrUserDoesNotHaveReadPermission.Error()))
 			return
 		}
 
@@ -551,12 +551,12 @@ func listProjects(service project.UseCase) func(w http.ResponseWriter, r *http.R
 	}
 }
 
-// Checks if a users list of permissions contains the provided permission
-func userHasPermission(permission string, permissionsList []string) bool {
-	if len(permissionsList) == 0 {
+// userHasPermission Checks if a users list of permissions contains the provided permission
+func userHasPermission(permission string, usersPermissionsList []string) bool {
+	if len(usersPermissionsList) == 0 {
 		return false
 	}
-	for _, p := range permissionsList {
+	for _, p := range usersPermissionsList {
 		if p == permission {
 			return true
 		}
@@ -564,7 +564,7 @@ func userHasPermission(permission string, permissionsList []string) bool {
 	return false
 }
 
-//MakeProjectHandlers make url handlers for creating, updating, deleting, and getting projects
+// MakeProjectHandlers make url handlers for creating, updating, deleting, and getting projects
 func MakeProjectHandlers(r *mux.Router, service project.UseCase) {
 
 	r.HandleFunc("/v1/projects", createProject(service)).Methods("POST", "OPTIONS")
