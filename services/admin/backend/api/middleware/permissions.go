@@ -24,10 +24,10 @@ type RPT struct {
 	Scopes []string `json:"scopes"`
 
 	// ResourceId Client authorization resource id
-	ResourceId string `json:"rsid"`
+	ResourceId string `json:"resourceId"`
 
 	// ResourceName Client authorization resource name
-	ResourceName string `json:"rsname"`
+	ResourceName string `json:"resourceName"`
 }
 
 // ExtractToken extracts the JWT token from the header.
