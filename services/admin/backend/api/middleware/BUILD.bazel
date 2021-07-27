@@ -5,11 +5,13 @@ go_library(
     srcs = [
         "cors.go",
         "metrics.go",
+        "permissions.go",
     ],
     importpath = "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/api/middleware",
     visibility = ["//visibility:public"],
     deps = [
         "//shared/go/pkg/metric",
+        "@com_github_golang_jwt_jwt//:go_default_library",
         "@com_github_urfave_negroni//:negroni",
     ],
 )

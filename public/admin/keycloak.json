@@ -1,8 +1,9 @@
 {
-  "realm": "admin-service-dsp-1760",
+  "realm": "permissions-test",
   "auth-server-url": "https://auth.dasch.swiss/auth/",
   "ssl-required": "external",
-  "resource": "dasch-service-platform",
-  "public-client": true,
-  "confidential-port": 0
+  "resource": "admin-service",
+  "verify-token-audience": true,
+  "confidential-port": 0,
+  "policy-enforcer": {}
 }

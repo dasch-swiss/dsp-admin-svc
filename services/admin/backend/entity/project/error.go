@@ -45,3 +45,15 @@ var ErrProjectHasBeenDeleted = errors.New("project has been marked as deleted")
 
 //ErrShortCodeAlreadyExists provided short code already exists
 var ErrShortCodeAlreadyExists = errors.New("provided short code already exists")
+
+//ErrUserDoesNotHaveCreatePermission user does not have permission to create projects
+var ErrUserDoesNotHaveCreatePermission = errors.New("user does not have permission to create projects")
+
+//ErrUserDoesNotHaveReadPermission user does not have permission to view projects
+var ErrUserDoesNotHaveReadPermission = errors.New("user does not have permission to view projects")
+
+//ErrUserDoesNotHaveUpdatePermission user does not have permission to update projects
+var ErrUserDoesNotHaveUpdatePermission = errors.New("user does not have permission to update projects")
+
+//ErrUserDoesNotHaveDeletePermission user does not have permission to delete projects
+var ErrUserDoesNotHaveDeletePermission = errors.New("user does not have permission to delete projects")

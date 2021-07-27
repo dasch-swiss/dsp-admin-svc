@@ -8,6 +8,7 @@ go_library(
     importpath = "github.com/dasch-swiss/dasch-service-platform/services/admin/backend/api/handler",
     visibility = ["//visibility:public"],
     deps = [
+        "//services/admin/backend/api/middleware",
         "//services/admin/backend/api/presenter",
         "//services/admin/backend/entity",
         "//services/admin/backend/entity/project",
