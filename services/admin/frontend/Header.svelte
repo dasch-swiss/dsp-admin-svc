@@ -8,13 +8,14 @@
     let logged_in = null;
 
     onMount(() => {
-        kc.init({onLoad: "check-sso", checkLoginIframe: false}).then((auth) => {
+        kc.init({onLoad: "check-sso", enableLogging: true}).then((auth) => {
             logged_in = auth;
             if (auth) {
                 logged_in = true;
 
                 kc.loadUserInfo().then((user) => {
                     user.token = kc.idToken;
+
                     currentUser.set(user);
                 });
             }

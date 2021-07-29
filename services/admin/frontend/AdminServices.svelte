@@ -4,6 +4,7 @@
     import ProjectPage from "./ProjectPage.svelte";
     import Redirect from "./Redirect.svelte";
     import Header from "./Header.svelte";
+    import Home from "./Home.svelte";
 
     export let url = "";
 
@@ -15,9 +16,7 @@
         <Router url="{url}">
             <Route path="/projects/:id"><ProjectPage /></Route>
             <Route path="/projects"><Projects /></Route>
-            <Route path="/">
-                <Redirect to="/projects" />
-            </Route>
+            <Route path="/"><Home /></Route>
         </Router>
     </div>
 </div>
