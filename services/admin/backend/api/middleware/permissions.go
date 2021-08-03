@@ -120,10 +120,10 @@ func getPermissions(r *http.Request) ([]string, error) {
 		return nil, err
 	}
 
-	endpoint := "https://auth.dasch.swiss/auth/realms/permissions-test/protocol/openid-connect/token"
+	endpoint := "https://auth.dasch.swiss/auth/realms/admin-service/protocol/openid-connect/token"
 	data := url.Values{}
 	data.Set("grant_type", "urn:ietf:params:oauth:grant-type:uma-ticket")
-	data.Set("audience", "projects-api")
+	data.Set("audience", "admin-service-api")
 	data.Set("response_mode", "permissions")
 
 	client := &http.Client{}

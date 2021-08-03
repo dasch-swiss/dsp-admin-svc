@@ -100,6 +100,5 @@ export async function deleteProject(jwt: string, uuid: string): Promise<void> {
 }
 
 export function getUser(user: User) {
-  console.log(user);
   currentUser.set(user);
 }

@@ -14,19 +14,17 @@
                 logged_in = true;
 
                 kc.loadUserInfo().then((user) => {
-                    user.token = kc.idToken;
-
+                    user.token = kc.token;
                     currentUser.set(user);
                 });
             }
         })
     });
 
-
 </script>
 
 <div class="header">
-    <pre>{JSON.stringify($currentUser, null, 2)}</pre>
+<!--    <pre>{JSON.stringify($currentUser, null, 2)}</pre>-->
 <!--    <div><p>{JSON.stringify($currentUser.token, null, 2)}</p></div>-->
     <div class="login-logout">
         {#if logged_in && $currentUser.preferred_username}

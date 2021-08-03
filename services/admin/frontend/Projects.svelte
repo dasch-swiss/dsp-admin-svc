@@ -7,10 +7,9 @@
 
     onMount(() => {
         currentUser.subscribe(async userInfo => {
-            console.log(userInfo);
-            // if ($currentUser.token) {
-            //     await getProjects(userInfo.token);
-            // }
+            if ($currentUser.token) {
+                await getProjects(userInfo.token);
+            }
         });
     });
 

@@ -32,7 +32,7 @@
     </div>
 </div>
 
-<style lang="scss">
+<style>
     .home {
         width: 96%;
         padding-left: 2%;
