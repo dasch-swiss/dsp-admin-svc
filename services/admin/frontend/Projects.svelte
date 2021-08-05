@@ -7,7 +7,7 @@
 
     onMount(() => {
         currentUser.subscribe(async userInfo => {
-            if ($currentUser.token) {
+            if ($currentUser.roles && $currentUser.roles.includes("Role:SystemAdmin")) {
                 await getProjects(userInfo.token);
             }
         });
@@ -20,7 +20,7 @@
     <div>
         <h1>Projects</h1>
     </div>
-    {#if $currentUser.token}
+    {#if $currentUser.token && $currentUser.roles && $currentUser.roles.includes("Role:SystemAdmin")}
         <div class="list">
             {#each $projectsList as p}
                <li>
@@ -42,9 +42,15 @@
             </Modal>
         </div>
     {:else}
-        <div>
-            <p>You must be logged in to access the list of projects.</p>
-        </div>
+        {#if $currentUser.token}
+            <div>
+                <p>You do not have permission to see the list of projects.</p>
+            </div>
+        {:else }
+            <div>
+                <p>You must be logged in to access the list of projects.</p>
+            </div>
+        {/if}
     {/if}
 </div>
 

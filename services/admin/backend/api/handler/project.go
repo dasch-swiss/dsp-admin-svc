@@ -53,10 +53,10 @@ func createProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 			return
 		}
 
-		// ensure the user has sufficient permissions for the action
-		if userInfo.Permissions == nil || !userHasPermission("projects:create", userInfo.Permissions) {
+		// ensure the user has the required role for the action
+		if userInfo.Roles == nil || !checkRoles("Role:SystemAdmin", userInfo.Roles) {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(projectEntity.ErrUserDoesNotHaveCreatePermission.Error()))
+			w.Write([]byte(projectEntity.ErrUserDoesNotHaveReadPermission.Error()))
 			return
 		}
 
@@ -173,10 +173,10 @@ func updateProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 			return
 		}
 
-		// ensure the user has sufficient permissions for the action
-		if userInfo.Permissions == nil || !userHasPermission("projects:update", userInfo.Permissions) {
+		// ensure the user has the required role for the action
+		if userInfo.Roles == nil || !checkRoles("Role:SystemAdmin", userInfo.Roles) {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(projectEntity.ErrUserDoesNotHaveUpdatePermission.Error()))
+			w.Write([]byte(projectEntity.ErrUserDoesNotHaveReadPermission.Error()))
 			return
 		}
 
@@ -314,8 +314,8 @@ func getProject(service project.UseCase) func(w http.ResponseWriter, r *http.Req
 			return
 		}
 
-		// ensure the user has sufficient permissions for the action
-		if userInfo.Permissions == nil || !userHasPermission("projects:read", userInfo.Permissions) {
+		// ensure the user has the required role for the action
+		if userInfo.Roles == nil || !checkRoles("Role:SystemAdmin", userInfo.Roles) {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(projectEntity.ErrUserDoesNotHaveReadPermission.Error()))
 			return
@@ -392,10 +392,10 @@ func deleteProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 			return
 		}
 
-		// ensure the user has sufficient permissions for the action
-		if userInfo.Permissions == nil || !userHasPermission("projects:delete", userInfo.Permissions) {
+		// ensure the user has the required role for the action
+		if userInfo.Roles == nil || !checkRoles("Role:SystemAdmin", userInfo.Roles) {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(projectEntity.ErrUserDoesNotHaveDeletePermission.Error()))
+			w.Write([]byte(projectEntity.ErrUserDoesNotHaveReadPermission.Error()))
 			return
 		}
 
@@ -480,8 +480,10 @@ func listProjects(service project.UseCase) func(w http.ResponseWriter, r *http.R
 			return
 		}
 
-		// ensure the user has sufficient permissions for the action
-		if userInfo.Permissions == nil || !userHasPermission("projects:read", userInfo.Permissions) {
+		log.Print(userInfo)
+
+		// ensure the user has the required role for the action
+		if userInfo.Roles == nil || !checkRoles("Role:SystemAdmin", userInfo.Roles) {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(projectEntity.ErrUserDoesNotHaveReadPermission.Error()))
 			return
@@ -551,13 +553,9 @@ func listProjects(service project.UseCase) func(w http.ResponseWriter, r *http.R
 	}
 }
 
-// userHasPermission Checks if a users list of permissions contains the provided permission
-func userHasPermission(permission string, usersPermissionsList []string) bool {
-	if len(usersPermissionsList) == 0 {
-		return false
-	}
-	for _, p := range usersPermissionsList {
-		if p == permission {
+func checkRoles(role string, usersRoleList[]interface{}) bool {
+	for _, r := range usersRoleList {
+		if r == role {
 			return true
 		}
 	}

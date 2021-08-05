@@ -1,33 +1,18 @@
 package middleware
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
-	"strconv"
 	"strings"
 )
 
 type AccessDetails struct {
 	UserId string
-	Permissions []string
-}
-
-// Requesting Party Token
-type RPT struct {
-	// Scopes Client authorization scopes (essentially the permission strings)
-	Scopes []string `json:"scopes"`
-
-	// ResourceId Client authorization resource id
-	ResourceId string `json:"resourceId"`
-
-	// ResourceName Client authorization resource name
-	ResourceName string `json:"resourceName"`
+	Groups []interface{}
+	Roles []interface{}
 }
 
 // ExtractToken extracts the JWT token from the header.
@@ -63,18 +48,6 @@ func VerifyToken(r *http.Request) (*jwt.Token, error) {
 	return token, nil
 }
 
-// TokenValid checks if a JWT token is valid.
-func TokenValid(r *http.Request) error {
-	token, err := VerifyToken(r)
-	if err != nil {
-		return err
-	}
-	if _, ok := token.Claims.(jwt.Claims); !ok && !token.Valid {
-		return err
-	}
-	return nil
-}
-
 // ExtractTokenMetadata extracts the data contained within the JWT token and returns an AccessDetails object.
 func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
 	token, err := VerifyToken(r)
@@ -88,14 +61,20 @@ func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
 			return nil, err
 		}
 
-		permissions, permissionsErr := getPermissions(r)
-		if permissionsErr != nil {
-			return nil, permissionsErr
+		groups, ok := claims["groups"].([]interface{})
+		if !ok {
+			return nil, err
+		}
+
+		roles, ok := claims["roles"].([]interface{})
+		if !ok {
+			return nil, err
 		}
 
 		return &AccessDetails{
 			UserId: userId,
-			Permissions: permissions,
+			Groups: groups,
+			Roles: roles,
 		}, nil
 	}
 	return nil, err
@@ -109,64 +88,4 @@ func getPublicKey() []byte {
 	}
 
 	return publicKey
-}
-
-// getPermissions returns a list of the users permissions
-func getPermissions(r *http.Request) ([]string, error) {
-
-	// check token to make sure it's valid
-	_, err := VerifyToken(r)
-	if err != nil {
-		return nil, err
-	}
-
-	endpoint := "https://auth.dasch.swiss/auth/realms/permissions-test/protocol/openid-connect/token"
-	data := url.Values{}
-	data.Set("grant_type", "urn:ietf:params:oauth:grant-type:uma-ticket")
-	data.Set("audience", "projects-api")
-	data.Set("response_mode", "permissions")
-
-	client := &http.Client{}
-
-	req, reqErr := http.NewRequest("POST", endpoint, strings.NewReader(data.Encode())) // URL-encoded payload
-	if reqErr != nil {
-		log.Fatal(reqErr)
-	}
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Add("Authorization", r.Header.Get("Authorization"))
-	r.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
-
-	// make request to the endpoint to obtain the users RPT which contains the users permissions
-	res, resErr := client.Do(req)
-	if resErr != nil {
-		return nil, resErr
-	}
-	defer res.Body.Close()
-
-	// body is a byte array which is needed for unmarshalling (Golang term for deserialization)
-	body, bodyErr := ioutil.ReadAll(res.Body)
-	if bodyErr != nil {
-		return nil, bodyErr
-	}
-
-	// users list of RPTs
-	var rpt []RPT
-
-	// unmarshal/deserialize the body from the response
-	unmarshalError := json.Unmarshal(body, &rpt)
-	if unmarshalError != nil {
-		return nil, errors.New("user has no permissions")
-	}
-
-	// list of permission to return
-	var permissions []string
-
-	// loop through the list of users RPTs to create a list of all the permissions the user has (scope = permission)
-	for _, tok := range rpt {
-		for _, scope := range tok.Scopes {
-			permissions = append(permissions, scope)
-		}
-	}
-
-	return permissions, err
 }
