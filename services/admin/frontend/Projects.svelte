@@ -7,6 +7,7 @@
 
     onMount(() => {
         currentUser.subscribe(async userInfo => {
+            // use groups not roles
             if ($currentUser.roles && $currentUser.roles.includes("Role:SystemAdmin")) {
                 await getProjects(userInfo.token);
             }

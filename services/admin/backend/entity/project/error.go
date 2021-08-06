@@ -46,14 +46,17 @@ var ErrProjectHasBeenDeleted = errors.New("project has been marked as deleted")
 //ErrShortCodeAlreadyExists provided short code already exists
 var ErrShortCodeAlreadyExists = errors.New("provided short code already exists")
 
-//ErrUserDoesNotHaveCreatePermission user does not have permission to create projects
-var ErrUserDoesNotHaveCreatePermission = errors.New("user does not have permission to create projects")
+//ErrUserDoesNotHaveCreateProjectsPermission user does not have permission to create projects
+var ErrUserDoesNotHaveCreateProjectsPermission = errors.New("user does not have permission to create projects")
 
-//ErrUserDoesNotHaveReadPermission user does not have permission to view projects
-var ErrUserDoesNotHaveReadPermission = errors.New("user does not have permission to view projects")
+//ErrUserDoesNotHaveProjectPermission user does not have permission to view this project
+var ErrUserDoesNotHaveReadProjectPermission = errors.New("user does not have permission to view this project")
 
-//ErrUserDoesNotHaveUpdatePermission user does not have permission to update projects
-var ErrUserDoesNotHaveUpdatePermission = errors.New("user does not have permission to update projects")
+//ErrUserDoesNotHaveReadAllProjectsPermission user does not have permission to view all projects
+var ErrUserDoesNotHaveReadAllProjectsPermission = errors.New("user does not have permission to view all projects")
 
-//ErrUserDoesNotHaveDeletePermission user does not have permission to delete projects
-var ErrUserDoesNotHaveDeletePermission = errors.New("user does not have permission to delete projects")
+//ErrUserDoesNotHaveUpdateProjectPermission user does not have permission to update projects
+var ErrUserDoesNotHaveUpdateProjectPermission = errors.New("user does not have permission to update projects")
+
+//ErrUserDoesNotHaveDeleteProjectPermission user does not have permission to delete projects
+var ErrUserDoesNotHaveDeleteProjectPermission = errors.New("user does not have permission to delete projects")

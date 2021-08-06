@@ -9,14 +9,18 @@ import (
 	"strings"
 )
 
-type AccessDetails struct {
-	UserId string
-	Groups []interface{}
-	Roles []interface{}
+type UserInfo struct {
+	UserId         string
+	Groups         []interface{}
+	Roles          []interface{}
+	Projects       []string
+	IsSystemAdmin  bool
+	IsProjectAdmin bool
 }
 
 // ExtractToken extracts the JWT token from the header.
 func ExtractToken(r *http.Request) string {
+	log.Print("EXTRACT TOKEN")
 	bearToken := r.Header.Get("Authorization")
 	// normally Authorization the_token_xxx
 	strArr := strings.Split(bearToken, " ")
@@ -28,6 +32,7 @@ func ExtractToken(r *http.Request) string {
 
 // VerifyToken verifies the JWT token to ensure the public key was provided and it was signed via RSA.
 func VerifyToken(r *http.Request) (*jwt.Token, error) {
+	log.Print("VERIFY TOKEN")
 	tokenString := ExtractToken(r)
 
 	key, err := jwt.ParseRSAPublicKeyFromPEM(getPublicKey())
@@ -48,8 +53,9 @@ func VerifyToken(r *http.Request) (*jwt.Token, error) {
 	return token, nil
 }
 
-// ExtractTokenMetadata extracts the data contained within the JWT token and returns an AccessDetails object.
-func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
+// ExtractTokenMetadata extracts the data contained within the JWT token and returns an UserInfo object.
+func ExtractTokenMetadata(r *http.Request) (*UserInfo, error) {
+	log.Print("EXTRACT TOKEN METADATA")
 	token, err := VerifyToken(r)
 	if err != nil {
 		return nil, err
@@ -71,10 +77,37 @@ func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
 			return nil, err
 		}
 
-		return &AccessDetails{
-			UserId: userId,
-			Groups: groups,
-			Roles: roles,
+		var isSysAdmin = false
+		var isProjAdmin = false
+		var projects []string
+
+		// loop through the users groups
+		for _, g := range groups {
+
+			// split each group by ":"
+			s := strings.Split(fmt.Sprintf("%v", g), ":")
+
+			// check if last item is equal to "SystemAdmin"
+			if s[len(s)-1] == "SystemAdmin" {
+				isSysAdmin = true
+			}
+
+			// check if last item is equal to "ProjectAdmin"
+			if s[len(s)-1] == "ProjectAdmin" {
+				isProjAdmin = true
+
+				// add the project id to list of projects user has access to
+				projects = append(projects, s[len(s)-2])
+			}
+		}
+
+		return &UserInfo{
+			UserId:         userId,
+			Groups:         groups,
+			Roles:          roles,
+			Projects:       projects,
+			IsSystemAdmin:  isSysAdmin,
+			IsProjectAdmin: isProjAdmin,
 		}, nil
 	}
 	return nil, err

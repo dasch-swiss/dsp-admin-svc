@@ -46,7 +46,7 @@ func createProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 
 		// check JWT token to make sure user is authenticated
 		// an object containing the users info is returned by ExtractTokenMetadata
-		userInfo, tokenErr := middleware.ExtractTokenMetadata(r)
+		user, tokenErr := middleware.ExtractTokenMetadata(r)
 		if tokenErr != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(tokenErr.Error()))
@@ -54,9 +54,9 @@ func createProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 		}
 
 		// ensure the user has the required role for the action
-		if userInfo.Roles == nil || !checkRoles("Role:SystemAdmin", userInfo.Roles) {
+		if !user.IsSystemAdmin {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(projectEntity.ErrUserDoesNotHaveReadPermission.Error()))
+			w.Write([]byte(projectEntity.ErrUserDoesNotHaveCreateProjectsPermission.Error()))
 			return
 		}
 
@@ -164,31 +164,6 @@ func createProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 func updateProject(service project.UseCase) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		// check JWT token to make sure user is authenticated
-		// an object containing the users info is returned by ExtractTokenMetadata
-		userInfo, tokenErr := middleware.ExtractTokenMetadata(r)
-		if tokenErr != nil {
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(tokenErr.Error()))
-			return
-		}
-
-		// ensure the user has the required role for the action
-		if userInfo.Roles == nil || !checkRoles("Role:SystemAdmin", userInfo.Roles) {
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(projectEntity.ErrUserDoesNotHaveReadPermission.Error()))
-			return
-		}
-
-		var input RequestBody
-		err := json.NewDecoder(r.Body).Decode(&input)
-		if err != nil {
-			log.Println(err.Error())
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(err.Error()))
-			return
-		}
-
 		// get variables from request url
 		vars := mux.Vars(r)
 
@@ -200,6 +175,31 @@ func updateProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 
 		// assign the value of the Identifier
 		uuid.UnmarshalText(b)
+
+		// check JWT token to make sure user is authenticated
+		// an object containing the users info is returned by ExtractTokenMetadata
+		user, tokenErr := middleware.ExtractTokenMetadata(r)
+		if tokenErr != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(tokenErr.Error()))
+			return
+		}
+
+		// ensure the user has the required role for the action
+		if !user.IsSystemAdmin && !checkRoles("Role:" + uuid.String() + ":Update", user.Roles) {
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(projectEntity.ErrUserDoesNotHaveUpdateProjectPermission.Error()))
+			return
+		}
+
+		var input RequestBody
+		err := json.NewDecoder(r.Body).Decode(&input)
+		if err != nil {
+			log.Println(err.Error())
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
 
 		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(5)*time.Second)
 		defer cancel()
@@ -305,22 +305,6 @@ func updateProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 func getProject(service project.UseCase) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		// check JWT token to make sure user is authenticated
-		// an object containing the users info is returned by ExtractTokenMetadata
-		userInfo, tokenErr := middleware.ExtractTokenMetadata(r)
-		if tokenErr != nil {
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(tokenErr.Error()))
-			return
-		}
-
-		// ensure the user has the required role for the action
-		if userInfo.Roles == nil || !checkRoles("Role:SystemAdmin", userInfo.Roles) {
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(projectEntity.ErrUserDoesNotHaveReadPermission.Error()))
-			return
-		}
-
 		// get variables from request url
 		vars := mux.Vars(r)
 
@@ -328,6 +312,22 @@ func getProject(service project.UseCase) func(w http.ResponseWriter, r *http.Req
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte(err.Error()))
+			return
+		}
+
+		// check JWT token to make sure user is authenticated
+		// an object containing the users info is returned by ExtractTokenMetadata
+		user, tokenErr := middleware.ExtractTokenMetadata(r)
+		if tokenErr != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(tokenErr.Error()))
+			return
+		}
+
+		// ensure the user has the required role for the action
+		if user.Roles == nil || (!user.IsSystemAdmin && !checkRoles("Role:" + uuid.String() + ":Read", user.Roles)) {
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(projectEntity.ErrUserDoesNotHaveReadProjectPermission.Error()))
 			return
 		}
 
@@ -385,7 +385,7 @@ func deleteProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 
 		// check JWT token to make sure user is authenticated
 		// an object containing the users info is returned by ExtractTokenMetadata
-		userInfo, tokenErr := middleware.ExtractTokenMetadata(r)
+		user, tokenErr := middleware.ExtractTokenMetadata(r)
 		if tokenErr != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(tokenErr.Error()))
@@ -393,9 +393,9 @@ func deleteProject(service project.UseCase) func(w http.ResponseWriter, r *http.
 		}
 
 		// ensure the user has the required role for the action
-		if userInfo.Roles == nil || !checkRoles("Role:SystemAdmin", userInfo.Roles) {
+		if !user.IsSystemAdmin {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(projectEntity.ErrUserDoesNotHaveReadPermission.Error()))
+			w.Write([]byte(projectEntity.ErrUserDoesNotHaveDeleteProjectPermission.Error()))
 			return
 		}
 
@@ -473,19 +473,21 @@ func listProjects(service project.UseCase) func(w http.ResponseWriter, r *http.R
 
 		// check JWT token to make sure user is authenticated
 		// an object containing the users info is returned by ExtractTokenMetadata
-		userInfo, tokenErr := middleware.ExtractTokenMetadata(r)
+		user, tokenErr := middleware.ExtractTokenMetadata(r)
 		if tokenErr != nil {
+			log.Print("EXTRACTING TOKEN METADATA FAILED")
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(tokenErr.Error()))
 			return
 		}
 
-		log.Print(userInfo)
+		log.Print(user)
 
 		// ensure the user has the required role for the action
-		if userInfo.Roles == nil || !checkRoles("Role:SystemAdmin", userInfo.Roles) {
+		if !user.IsSystemAdmin && !user.IsProjectAdmin {
+			log.Print("USER ROLES CHECK FAILED")
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(projectEntity.ErrUserDoesNotHaveReadPermission.Error()))
+			w.Write([]byte(projectEntity.ErrUserDoesNotHaveReadAllProjectsPermission.Error()))
 			return
 		}
 
@@ -500,7 +502,7 @@ func listProjects(service project.UseCase) func(w http.ResponseWriter, r *http.R
 		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(5)*time.Second)
 		defer cancel()
 
-		// get all project ids
+		// get all projects
 		projects, err := service.ListProjects(ctx, input.ReturnDeletedProjects)
 		w.Header().Set("Content-Type", "application/json")
 
@@ -520,6 +522,27 @@ func listProjects(service project.UseCase) func(w http.ResponseWriter, r *http.R
 			w.Write([]byte(projectEntity.ErrNoProjectDataReturned.Error()))
 			return
 		}
+
+		// if user is not a system admin and is a project admin, filter `projects` to only contain the projects the user has access to
+		if !user.IsSystemAdmin && user.IsProjectAdmin {
+
+			var filteredProjects []projectEntity.Aggregate
+
+			for i := range projects { // for each projects in entire projects list
+				log.Print("project id: ", projects[i].ID().String())
+				for _, atp := range user.Projects { // for each projects user has access to
+					if projects[i].ID().String() == atp { // compare project id to atp id
+						log.Print("USER HAS ACCESS TO: ", projects[i].ID().String())
+						filteredProjects = append(filteredProjects, projects[i]) // add to filtered array
+					}
+				}
+			}
+
+			// set the filteredProjects as the list of projects to be returned
+			projects = filteredProjects
+		}
+
+		log.Print("USERS PROJECTS: ", projects)
 
 		var res []presenter.Project
 
@@ -553,12 +576,20 @@ func listProjects(service project.UseCase) func(w http.ResponseWriter, r *http.R
 	}
 }
 
+// checkRoles checks if a specified role is in the list of the roles of the user
 func checkRoles(role string, usersRoleList[]interface{}) bool {
-	for _, r := range usersRoleList {
-		if r == role {
+
+	// if user has no roles, return false
+	if len(role) == 0 {
+		return false
+	}
+
+	for _, r := range usersRoleList { // for each role the user has
+		if r == role { // check if the user has the role
 			return true
 		}
 	}
+
 	return false
 }
 
