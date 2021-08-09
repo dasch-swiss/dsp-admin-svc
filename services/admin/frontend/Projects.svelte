@@ -7,7 +7,7 @@
 
     onMount(() => {
         currentUser.subscribe(async userInfo => {
-            // should probably not event attempt call if user isn't a system admin or project admin
+            // should probably not even attempt call if user isn't a system admin or project admin
             if ($currentUser.groups && $currentUser.groups.length != 0) {
                 await getProjects(userInfo.token);
             }
