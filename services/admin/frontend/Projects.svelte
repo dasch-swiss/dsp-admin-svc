@@ -7,10 +7,11 @@
 
     onMount(() => {
         currentUser.subscribe(async userInfo => {
-            // use groups not roles
-            if ($currentUser.roles && $currentUser.roles.includes("Role:SystemAdmin")) {
+            // should probably not event attempt call if user isn't a system admin or project admin
+            if ($currentUser.groups && $currentUser.groups.length != 0) {
                 await getProjects(userInfo.token);
             }
+            console.log("CURRENT USER: ", $currentUser)
         });
     });
 
@@ -21,7 +22,7 @@
     <div>
         <h1>Projects</h1>
     </div>
-    {#if $currentUser.token && $currentUser.roles && $currentUser.roles.includes("Role:SystemAdmin")}
+    {#if $projectsList.length != 0}
         <div class="list">
             {#each $projectsList as p}
                <li>
@@ -32,20 +33,24 @@
                            </Link>
                        </Router>
                    </div>
+                   {#if $currentUser && $currentUser.groups && $currentUser.groups.includes("Group:SystemAdmin")}
                    <div class="delete">
                        <button on:click={deleteProject($currentUser.token, p.id)}>X</button>
                    </div>
+                   {/if}
                </li>
             {/each}
             <!--    Modal for creating a new project-->
+            {#if $currentUser && $currentUser.groups && $currentUser.groups.includes("Group:SystemAdmin")}
             <Modal>
                 <Content modalType="create" token="{$currentUser.token}"/>
             </Modal>
+            {/if}
         </div>
     {:else}
         {#if $currentUser.token}
             <div>
-                <p>You do not have permission to see the list of projects.</p>
+                <p>You are not a member of any projects.</p>
             </div>
         {:else }
             <div>
