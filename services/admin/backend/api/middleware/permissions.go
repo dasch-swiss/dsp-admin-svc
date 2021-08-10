@@ -20,7 +20,6 @@ type UserInfo struct {
 
 // ExtractToken extracts the JWT token from the header.
 func ExtractToken(r *http.Request) string {
-	log.Print("EXTRACT TOKEN")
 	bearToken := r.Header.Get("Authorization")
 	// normally Authorization the_token_xxx
 	strArr := strings.Split(bearToken, " ")
@@ -32,7 +31,6 @@ func ExtractToken(r *http.Request) string {
 
 // VerifyToken verifies the JWT token to ensure the public key was provided and it was signed via RSA.
 func VerifyToken(r *http.Request) (*jwt.Token, error) {
-	log.Print("VERIFY TOKEN")
 	tokenString := ExtractToken(r)
 
 	key, err := jwt.ParseRSAPublicKeyFromPEM(getPublicKey())
@@ -55,7 +53,6 @@ func VerifyToken(r *http.Request) (*jwt.Token, error) {
 
 // ExtractTokenMetadata extracts the data contained within the JWT token and returns an UserInfo object.
 func ExtractTokenMetadata(r *http.Request) (*UserInfo, error) {
-	log.Print("EXTRACT TOKEN METADATA")
 	token, err := VerifyToken(r)
 	if err != nil {
 		return nil, err

@@ -475,7 +475,6 @@ func listProjects(service project.UseCase) func(w http.ResponseWriter, r *http.R
 		// an object containing the users info is returned by ExtractTokenMetadata
 		user, tokenErr := middleware.ExtractTokenMetadata(r)
 		if tokenErr != nil {
-			log.Print("EXTRACTING TOKEN METADATA FAILED")
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(tokenErr.Error()))
 			return
@@ -485,7 +484,6 @@ func listProjects(service project.UseCase) func(w http.ResponseWriter, r *http.R
 
 		// ensure the user has the required role for the action
 		if !user.IsSystemAdmin && !user.IsProjectAdmin {
-			log.Print("USER ROLES CHECK FAILED")
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(projectEntity.ErrUserDoesNotHaveReadAllProjectsPermission.Error()))
 			return
@@ -529,10 +527,8 @@ func listProjects(service project.UseCase) func(w http.ResponseWriter, r *http.R
 			var filteredProjects []projectEntity.Aggregate
 
 			for i := range projects { // for each projects in entire projects list
-				log.Print("project id: ", projects[i].ID().String())
 				for _, atp := range user.Projects { // for each projects user has access to
 					if projects[i].ID().String() == atp { // compare project id to atp id
-						log.Print("USER HAS ACCESS TO: ", projects[i].ID().String())
 						filteredProjects = append(filteredProjects, projects[i]) // add to filtered array
 					}
 				}
@@ -541,8 +537,6 @@ func listProjects(service project.UseCase) func(w http.ResponseWriter, r *http.R
 			// set the filteredProjects as the list of projects to be returned
 			projects = filteredProjects
 		}
-
-		log.Print("USERS PROJECTS: ", projects)
 
 		var res []presenter.Project
 

@@ -11,7 +11,6 @@
             if ($currentUser.groups && $currentUser.groups.length != 0) {
                 await getProjects(userInfo.token);
             }
-            console.log("CURRENT USER: ", $currentUser)
         });
     });
 
