@@ -7,7 +7,8 @@
 
     onMount(() => {
         currentUser.subscribe(async userInfo => {
-            if ($currentUser.token) {
+            // should probably not even attempt call if user isn't a system admin or project admin
+            if ($currentUser.groups && $currentUser.groups.length != 0) {
                 await getProjects(userInfo.token);
             }
         });
@@ -20,7 +21,7 @@
     <div>
         <h1>Projects</h1>
     </div>
-    {#if $currentUser.token}
+    {#if $projectsList.length != 0}
         <div class="list">
             {#each $projectsList as p}
                <li>
@@ -31,20 +32,30 @@
                            </Link>
                        </Router>
                    </div>
+                   {#if $currentUser && $currentUser.groups && $currentUser.groups.includes("Group:SystemAdmin")}
                    <div class="delete">
                        <button on:click={deleteProject($currentUser.token, p.id)}>X</button>
                    </div>
+                   {/if}
                </li>
             {/each}
             <!--    Modal for creating a new project-->
+            {#if $currentUser && $currentUser.groups && $currentUser.groups.includes("Group:SystemAdmin")}
             <Modal>
                 <Content modalType="create" token="{$currentUser.token}"/>
             </Modal>
+            {/if}
         </div>
     {:else}
-        <div>
-            <p>You must be logged in to access the list of projects.</p>
-        </div>
+        {#if $currentUser.token}
+            <div>
+                <p>You are not a member of any projects.</p>
+            </div>
+        {:else }
+            <div>
+                <p>You must be logged in to access the list of projects.</p>
+            </div>
+        {/if}
     {/if}
 </div>
 

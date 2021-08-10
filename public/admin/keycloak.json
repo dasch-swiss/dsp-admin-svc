@@ -1,9 +1,8 @@
 {
-  "realm": "permissions-test",
+  "realm": "Basic-RBAC",
   "auth-server-url": "https://auth.dasch.swiss/auth/",
   "ssl-required": "external",
-  "resource": "admin-service",
-  "verify-token-audience": true,
-  "confidential-port": 0,
-  "policy-enforcer": {}
+  "resource": "auth",
+  "public-client": true,
+  "confidential-port": 0
 }

@@ -14,7 +14,7 @@
                 logged_in = true;
 
                 kc.loadUserInfo().then((user) => {
-                    user.token = kc.idToken;
+                    user.token = kc.token;
                     currentUser.set(user);
                 });
             }
