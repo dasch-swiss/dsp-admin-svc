@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.0](https://www.github.com/dasch-swiss/dsp-admin-svc/compare/v1.4.1...v1.5.0) (2021-08-10)
+
+
+### Enhancements
+
+* **admin-service & ui:** basic role based access control (DSP-1843) ([#6](https://www.github.com/dasch-swiss/dsp-admin-svc/issues/6)) ([8f13f65](https://www.github.com/dasch-swiss/dsp-admin-svc/commit/8f13f6560a83cf0f0bca09682e96aaa3abc1e1b4))
+* **projects-api:** permissions (DSP-1787) ([#2](https://www.github.com/dasch-swiss/dsp-admin-svc/issues/2)) ([c54ec74](https://www.github.com/dasch-swiss/dsp-admin-svc/commit/c54ec74189ebd0d9ba5a6b352c944b75e0f4d9f9))
+
 ### [1.4.1](https://www.github.com/dasch-swiss/dasch-service-platform/compare/v1.4.0...v1.4.1) (2021-07-14)
 
 
